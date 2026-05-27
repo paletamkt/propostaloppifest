@@ -293,6 +293,133 @@
 
   .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
 
+  /* ── CTAs ao longo da LP ── */
+
+  /* Nav CTA */
+  .nav-cta {
+    background: var(--gold);
+    color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: none;
+    transition: background 0.3s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
+
+  /* Section CTA — simples, centrado */
+  .section-cta-label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    letter-spacing: 0.03em;
+  }
+
+  /* Mid-page CTA — faixa de conversão */
+  .mid-cta {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .mid-cta-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 56px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 40px;
+  }
+  .mid-cta-eyebrow {
+    font-size: 10px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .mid-cta-title {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(22px, 3vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .mid-cta-actions {
+    display: flex;
+    gap: 16px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+
+  /* Sticky bottom bar — mobile only */
+  .sticky-bar {
+    display: none;
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    z-index: 200;
+    background: rgba(7,11,14,0.97);
+    border-top: 1px solid rgba(201,146,42,0.3);
+    padding: 12px 16px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    gap: 10px;
+    transform: translateY(100%);
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .sticky-bar.visible { transform: translateY(0); }
+  .sticky-bar-primary {
+    flex: 1;
+    background: var(--gold);
+    color: var(--bg);
+    border: none;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .sticky-bar-secondary {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid rgba(232,226,217,0.15);
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    text-decoration: none;
+    border-radius: 4px;
+    text-align: center;
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  @media (max-width: 900px) {
+    .sticky-bar { display: flex; }
+    .mid-cta-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
+    .mid-cta-actions { width: 100%; }
+    .mid-cta-actions .btn-primary,
+    .mid-cta-actions .btn-ghost { flex: 1; text-align: center; justify-content: center; }
+    /* Espaço para sticky bar não cobrir conteúdo */
+    footer { padding-bottom: 80px; }
+  }
+
+  @media (max-width: 600px) {
+    .nav-cta { display: none; }
+    .section-cta { padding-top: 40px !important; }
+  }
+
   /* ── RESPONSIVE ── */
 
   /* Tablet grande */
@@ -418,7 +545,7 @@
     <li><a href="#metodologia">Metodologia</a></li>
     <li><a href="#investimento">Investimento</a></li>
   </ul>
-  <div class="nav-badge">Nº 033.2025</div>
+  <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="nav-cta">Iniciar projeto →</a>
 </nav>
 
 <!-- HERO -->
@@ -524,6 +651,12 @@
       </div>
     </div>
   </div>
+
+  <!-- CTA pós-potencial -->
+  <div class="section-cta reveal" style="text-align: center; padding-top: 56px;">
+    <p class="section-cta-label">O potencial está mapeado. O próximo passo é ativar.</p>
+    <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">Quero iniciar meu projeto →</a>
+  </div>
 </div>
 
 <div class="divider"></div>
@@ -616,6 +749,20 @@
       <span class="pilar-icon">📈</span>
       <div class="pilar-title">Escala previsível</div>
       <p class="pilar-desc">O objetivo final não é crescer uma vez — é crescer todo mês. Construímos processos, automações e sistemas que transformam o Loppifest numa máquina de eventos.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CTA meio de página -->
+<div class="mid-cta reveal">
+  <div class="mid-cta-inner">
+    <div class="mid-cta-text">
+      <span class="mid-cta-eyebrow">Já viu o suficiente?</span>
+      <p class="mid-cta-title">A estratégia está clara.<br>A decisão também pode ser.</p>
+    </div>
+    <div class="mid-cta-actions">
+      <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">Iniciar meu projeto</a>
+      <a href="#investimento" class="btn-ghost">Ver investimento primeiro</a>
     </div>
   </div>
 </div>
@@ -856,6 +1003,12 @@
   <div class="reveal reveal-delay-2" style="background: var(--bg2); border-left: 3px solid var(--gold); padding: 28px 32px; display: flex; align-items: center; gap: 20px;">
     <span style="font-size: 20px; flex-shrink:0;">💡</span>
     <p style="font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300;">Contratar separado não é só mais caro — é mais lento, mais difícil de alinhar e gera uma visão fragmentada do negócio. A Paleta Food entrega uma única estratégia integrada, onde cada ação de conteúdo, tráfego e vendas fala a mesma língua.</p>
+  </div>
+
+  <!-- CTA pós-comparação: maior força de conversão -->
+  <div class="section-cta reveal" style="text-align: center; padding-top: 56px;">
+    <p class="section-cta-label">5 profissionais separados ou uma parceria estratégica completa?</p>
+    <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary" style="font-size: 14px; padding: 18px 48px;">Quero a parceria estratégica →</a>
   </div>
 </div>
 
