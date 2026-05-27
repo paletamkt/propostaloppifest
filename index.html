@@ -291,32 +291,117 @@
   .footer-brand span { color: var(--red-light); }
   .footer-info { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-align: right; }
 
-  /* RESPONSIVE */
+  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+
+  /* ── RESPONSIVE ── */
+
+  /* Tablet grande */
   @media (max-width: 1024px) {
     .pilares-grid { grid-template-columns: repeat(2, 1fr); }
     .potencial-mosaic { grid-template-columns: 1fr 1fr; }
     .pot-block.wide { grid-column: span 2; }
-    .pot-narrative { grid-template-columns: 1fr; gap: 40px; }
   }
+
+  /* Tablet / mobile grande */
   @media (max-width: 900px) {
+    /* Nav */
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+
+    /* Grids inline → coluna */
+    .grid-2col { grid-template-columns: 1fr !important; gap: 0 !important; }
+
+    /* Grids de seção */
     .levels-intro, .etapas-header, .conteudo-header { grid-template-columns: 1fr; gap: 40px; }
     .levels-grid, .pricing-grid, .funil { grid-template-columns: 1fr; }
     .diferenciais-grid { grid-template-columns: 1fr 1fr; }
     .assinatura-parties { grid-template-columns: 1fr; }
-    nav { padding: 16px 20px; }
-    .nav-links { display: none; }
     .timeline-prazo { display: none; }
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-    .footer-info { text-align: center; }
+
+    /* Potencial — blocos inline-grid */
     .potencial-mosaic { grid-template-columns: 1fr 1fr; }
     .pot-block.wide { grid-column: span 2; }
     .pot-block.tall { grid-row: auto; }
+
+    /* Seção pot-story: grid inline vira coluna */
+    #potencial .pot-story > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+      gap: 40px !important;
+    }
+
+    /* Comparação de custo: lado a lado vira empilhado */
+    #comparacao > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Antes/depois potencial */
+    #potencial > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+    #potencial > div > div[style*="border-left: 1px solid"] {
+      border-left: none !important;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Footer */
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-info { text-align: center; }
   }
+
+  /* Mobile */
   @media (max-width: 600px) {
+    /* Cursor desativado no touch */
+    .cursor, .cursor-ring { display: none; }
+    body { cursor: auto; }
+    a, button { cursor: pointer; }
+
+    /* Grids */
     .diferenciais-grid, .pilares-grid { grid-template-columns: 1fr; }
     .potencial-mosaic { grid-template-columns: 1fr; }
     .pot-block.wide { grid-column: span 1; }
-    #potencial, #conteudo, #pilares, #metodologia, #entregaveis, #diferenciais, #etapas, #investimento, #assinatura { padding: 80px 16px; }
+
+    /* Sections padding */
+    #potencial, #conteudo, #pilares, #metodologia,
+    #entregaveis, #diferenciais, #etapas,
+    #comparacao, #investimento, #assinatura { padding: 64px 16px; }
+
+    /* Hero ajustes */
+    .hero-cta { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-ghost { width: 100%; text-align: center; justify-content: center; }
+
+    /* Tabs scroll horizontal no mobile */
+    .tabs { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
+    .tab { white-space: nowrap; }
+
+    /* Comparação: preços menores */
+    #comparacao .cmp-row { flex-direction: column; gap: 4px; align-items: flex-start !important; }
+
+    /* Pot-story padding */
+    #potencial .pot-story { padding: 32px 20px !important; }
+
+    /* Comparação padding */
+    #comparacao > div[style*="grid"] > div { padding: 32px 20px !important; }
+
+    /* Assinatura ring menor */
+    .assinatura-ring { width: 140px; height: 140px; }
+    .assinatura-ring-inner { width: 60px; height: 60px; font-size: 22px; }
+
+    /* Assinatura botões empilhados */
+    .assinatura-inner > div[style*="display: flex"] { flex-direction: column !important; align-items: center !important; }
+
+    /* Party block padding */
+    .party-block { padding: 28px 24px 32px; }
+
+    /* Timeline */
+    .timeline-item { padding-left: 40px; }
+  }
+
+  /* Mobile pequeno */
+  @media (max-width: 380px) {
+    .nav-badge { display: none; }
+    #potencial, #conteudo, #pilares, #metodologia,
+    #entregaveis, #diferenciais, #etapas,
+    #comparacao, #investimento, #assinatura { padding: 48px 12px; }
   }
 </style>
 </head>
@@ -368,7 +453,7 @@
   <!-- Bloco narrativo principal: a jornada do cliente -->
   <div class="pot-story reveal" style="background: var(--bg2); padding: 56px 48px; margin-bottom: 2px; position: relative; overflow: hidden;">
     <div style="position:absolute; top:0; left:0; width:3px; height:100%; background: linear-gradient(to bottom, var(--teal-light), var(--gold), var(--red-light));"></div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+    <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
       <div>
         <div class="section-label" style="margin-bottom: 24px;">A história que já existe</div>
         <h3 style="font-family: 'Fraunces', serif; font-size: clamp(24px, 3vw, 36px); font-weight: 700; line-height: 1.2; margin-bottom: 24px;">Era moleque quando foi pela primeira vez com o pai. Hoje é ele quem quer contratar o evento do filho.</h3>
@@ -417,7 +502,7 @@
   </div>
 
   <!-- Linha do tempo: de onde vem para onde vai -->
-  <div class="reveal reveal-delay-2" style="background: var(--bg2); margin-top: 2px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--border);">
+  <div class="reveal reveal-delay-2 grid-2col" style="background: var(--bg2); margin-top: 2px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--border);">
     <div style="background: var(--bg2); padding: 48px 40px;">
       <div style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px;">Hoje — sem estratégia ativa</div>
       <div style="display: flex; flex-direction: column; gap: 16px;">
@@ -662,7 +747,7 @@
     <p class="section-desc reveal reveal-delay-2">Para entregar tudo que a Paleta Food entrega, você precisaria contratar pelo menos cinco profissionais separados. Veja o que isso representaria no caixa.</p>
   </div>
 
-  <div class="reveal reveal-delay-1" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-bottom: 2px;">
+  <div class="reveal reveal-delay-1 grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-bottom: 2px;">
 
     <!-- Lado esquerdo: contratar separado -->
     <div style="background: var(--bg2); padding: 48px 40px;">
@@ -870,7 +955,7 @@
       <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary" style="display:inline-flex; gap:10px; align-items:center;">
         🚀 Quero iniciar meu projeto
       </a>
-      <a href="https://wa.me/5592982410613" target="_blank" class="btn-ghost" style="display:inline-flex; gap:10px; align-items:center;">
+      <a href="https://wa.me/5592000000000" target="_blank" class="btn-ghost" style="display:inline-flex; gap:10px; align-items:center;">
         💬 Falar antes de decidir
       </a>
     </div>
