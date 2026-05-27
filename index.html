@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proposta Comercial | Loppifest × Paleta Food</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #0B5673;
+    --teal-light: #1a7a9e;
+    --red: #8B1A1A;
+    --red-light: #b02020;
+    --gold: #C9922A;
+    --gold-light: #e8b84b;
+    --bg: #070b0e;
+    --bg2: #0d1419;
+    --bg3: #111c23;
+    --text: #e8e2d9;
+    --text-muted: #8a9ba8;
+    --border: rgba(11,86,115,0.25);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
+
+  .cursor { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; }
+  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(201,146,42,0.5); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: left 0.18s ease-out, top 0.18s ease-out; }
+
+  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity: 0.025; pointer-events: none; z-index: 1000; }
+
+  /* NAV */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(7,11,14,0.95), transparent); backdrop-filter: blur(8px); }
+  .nav-logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+  .nav-logo span { color: var(--red-light); }
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; cursor: none; transition: color 0.3s; }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-badge { font-size: 10px; letter-spacing: 0.1em; padding: 6px 16px; border: 1px solid rgba(201,146,42,0.3); color: var(--gold); border-radius: 2px; }
+
+  /* HERO */
+  #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; text-align: center; padding: 60px 24px; }
+  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(11,86,115,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 80% at 80% 30%, rgba(139,26,26,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 50% 90%, rgba(201,146,42,0.06) 0%, transparent 60%); }
+  .hero-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(201,146,42,0.2) 40%, transparent); animation: lineDown 2s ease forwards; transform-origin: top; }
+  @keyframes lineDown { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(201,146,42,0.1); border: 1px solid rgba(201,146,42,0.3); border-radius: 100px; padding: 6px 18px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s 0.3s ease forwards; }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+  .hero-number { font-family: 'Fraunces', serif; font-size: clamp(11px, 1.5vw, 14px); font-weight: 300; letter-spacing: 0.3em; color: var(--text-muted); margin-bottom: 20px; opacity: 0; animation: fadeUp 0.8s 0.5s ease forwards; }
+  .hero-title { font-family: 'Fraunces', serif; font-size: clamp(52px, 10vw, 120px); font-weight: 900; line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 32px; opacity: 0; animation: fadeUp 1s 0.7s ease forwards; }
+  .hero-title span.accent-teal { color: var(--teal-light); }
+  .hero-title span.accent-red { color: var(--red-light); }
+  .hero-title span.accent-gold { color: var(--gold); }
+  .hero-sub { font-size: clamp(14px, 2vw, 18px); color: var(--text-muted); font-weight: 300; max-width: 520px; line-height: 1.7; margin-bottom: 60px; opacity: 0; animation: fadeUp 0.8s 1s ease forwards; }
+  .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp 0.8s 1.2s ease forwards; }
+  .btn-primary { background: var(--gold); color: #070b0e; border: none; padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: background 0.3s, transform 0.2s; display: inline-block; }
+  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-ghost { background: transparent; color: var(--text); border: 1px solid rgba(232,226,217,0.2); padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: border-color 0.3s, color 0.3s, transform 0.2s; display: inline-block; }
+  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+  .hero-scroll { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s 1.8s ease forwards; }
+  .hero-scroll span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
+  .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollAnim 1.5s infinite; }
+  @keyframes scrollAnim { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* DIVIDER */
+  .divider { width: 100%; height: 1px; background: var(--border); margin: 0; }
+
+  /* SECTION BASE */
+  .section-label { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
+  .section-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
+  .section-title { font-family: 'Fraunces', serif; font-size: clamp(32px, 5vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 24px; }
+  .section-desc { font-size: 16px; color: var(--text-muted); max-width: 600px; line-height: 1.8; font-weight: 300; }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+  .reveal-delay-5 { transition-delay: 0.5s; }
+
+  /* ── POTENCIAL ── */
+  #potencial { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .potencial-header { margin-bottom: 72px; }
+  .potencial-header .section-desc { max-width: 700px; }
+
+  .potencial-mosaic { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto; gap: 2px; background: var(--border); margin-bottom: 2px; }
+  .pot-block { background: var(--bg2); padding: 40px 36px; position: relative; overflow: hidden; transition: background 0.3s; cursor: none; }
+  .pot-block:hover { background: var(--bg3); }
+  .pot-block.wide { grid-column: span 2; }
+  .pot-block.tall { grid-row: span 2; }
+
+  .pot-block::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease; }
+  .pot-block:hover::after { transform: scaleX(1); }
+  .pot-accent-teal::after { background: var(--teal-light); }
+  .pot-accent-gold::after { background: var(--gold); }
+  .pot-accent-red::after { background: var(--red-light); }
+
+  .pot-num { font-family: 'Fraunces', serif; font-size: clamp(48px, 6vw, 80px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
+  .pot-accent-teal .pot-num { color: var(--teal-light); }
+  .pot-accent-gold .pot-num { color: var(--gold); }
+  .pot-accent-red .pot-num { color: var(--red-light); }
+  .pot-unit { font-size: 12px; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; font-weight: 500; margin-bottom: 16px; }
+  .pot-label { font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
+  .pot-label strong { color: var(--text); font-weight: 500; }
+
+  .pot-narrative { background: var(--bg2); padding: 48px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .pot-narrative-text h3 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
+  .pot-narrative-text p { font-size: 15px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+  .pot-narrative-text p + p { margin-top: 16px; }
+  .pot-loppiano { display: flex; flex-direction: column; gap: 20px; }
+  .pot-loppiano-stat { padding: 24px 28px; background: var(--bg3); border-left: 3px solid var(--gold); }
+  .pot-loppiano-stat .big { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .pot-loppiano-stat .small { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; margin-top: 4px; }
+
+  /* ── CONTEÚDO ── */
+  #conteudo { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .conteudo-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+
+  .funil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+  .funil-stage { background: var(--bg2); padding: 48px 36px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
+  .funil-stage:hover { background: var(--bg3); }
+  .funil-stage::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
+  .fs-1::before { background: var(--teal-light); }
+  .fs-2::before { background: var(--gold); }
+  .fs-3::before { background: var(--red-light); }
+
+  .funil-icon { font-size: 32px; margin-bottom: 24px; display: block; }
+  .funil-stage-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
+  .fs-1 .funil-stage-label { color: var(--teal-light); }
+  .fs-2 .funil-stage-label { color: var(--gold); }
+  .fs-3 .funil-stage-label { color: var(--red-light); }
+  .funil-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; margin-bottom: 16px; }
+  .funil-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300; margin-bottom: 24px; }
+  .funil-formats { display: flex; flex-wrap: wrap; gap: 8px; }
+  .funil-tag { font-size: 11px; padding: 4px 12px; border-radius: 100px; font-weight: 500; letter-spacing: 0.05em; }
+  .fs-1 .funil-tag { background: rgba(11,86,115,0.2); color: var(--teal-light); border: 1px solid rgba(11,86,115,0.3); }
+  .fs-2 .funil-tag { background: rgba(201,146,42,0.15); color: var(--gold); border: 1px solid rgba(201,146,42,0.3); }
+  .fs-3 .funil-tag { background: rgba(139,26,26,0.2); color: var(--red-light); border: 1px solid rgba(139,26,26,0.3); }
+
+  /* ── PILARES ── */
+  #pilares { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .pilares-header { margin-bottom: 72px; }
+
+  .pilares-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); }
+  .pilar-card { background: var(--bg2); padding: 48px 32px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
+  .pilar-card:hover { background: var(--bg3); }
+  .pilar-arrow { position: absolute; top: 28px; right: 28px; font-size: 20px; color: var(--gold); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateX(-8px); }
+  .pilar-card:hover .pilar-arrow { opacity: 1; transform: translateX(0); }
+  .pilar-num { font-family: 'Fraunces', serif; font-size: 64px; font-weight: 900; line-height: 1; color: rgba(201,146,42,0.06); margin-bottom: 24px; }
+  .pilar-icon { font-size: 28px; margin-bottom: 20px; display: block; }
+  .pilar-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+  .pilar-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+
+  /* ── METODOLOGIA ── */
+  #metodologia { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .levels-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+  .levels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+  .level-card { background: var(--bg2); padding: 48px 36px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
+  .level-card:hover { background: var(--bg3); }
+  .level-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; opacity: 0.6; transition: opacity 0.3s; }
+  .level-card:hover::before { opacity: 1; }
+  .level-card.l1::before { background: var(--teal); }
+  .level-card.l2::before { background: var(--gold); }
+  .level-card.l3::before { background: var(--red-light); }
+  .level-number { font-family: 'Fraunces', serif; font-size: 80px; font-weight: 900; line-height: 1; opacity: 0.08; position: absolute; top: 20px; right: 24px; pointer-events: none; }
+  .level-tag { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 12px; font-weight: 500; }
+  .l1 .level-tag { color: var(--teal-light); }
+  .l2 .level-tag { color: var(--gold); }
+  .l3 .level-tag { color: var(--red-light); }
+  .level-name { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; }
+  .level-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+
+  /* ── ENTREGAVEIS ── */
+  #entregaveis { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .tabs { display: flex; gap: 2px; margin-bottom: 48px; background: var(--border); padding: 2px; width: fit-content; }
+  .tab { padding: 12px 28px; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; background: transparent; border: none; color: var(--text-muted); cursor: none; transition: all 0.3s; font-family: 'DM Sans', sans-serif; font-weight: 500; }
+  .tab.active { background: var(--bg3); color: var(--text); }
+  .tab:hover:not(.active) { color: var(--text); }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+  .deliverables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2px; background: var(--border); }
+  .deliverable-item { background: var(--bg2); padding: 28px 32px; display: flex; align-items: flex-start; gap: 16px; transition: background 0.3s; cursor: none; }
+  .deliverable-item:hover { background: var(--bg3); }
+  .del-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
+  .l1-icon { background: rgba(11,86,115,0.2); border: 1px solid rgba(11,86,115,0.4); }
+  .l2-icon { background: rgba(201,146,42,0.15); border: 1px solid rgba(201,146,42,0.3); }
+  .l3-icon { background: rgba(139,26,26,0.2); border: 1px solid rgba(139,26,26,0.4); }
+  .del-text { font-size: 14px; color: var(--text); font-weight: 400; line-height: 1.5; }
+
+  /* ── DIFERENCIAIS ── */
+  #diferenciais { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .diferenciais-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); margin-top: 64px; }
+  .diferencial-card { background: var(--bg2); padding: 40px 32px; position: relative; overflow: hidden; cursor: none; transition: background 0.3s; }
+  .diferencial-card:hover { background: var(--bg3); }
+  .dif-num { font-family: 'Fraunces', serif; font-size: 72px; font-weight: 900; line-height: 1; color: rgba(201,146,42,0.06); position: absolute; top: 12px; right: 16px; }
+  .dif-icon { font-size: 24px; margin-bottom: 20px; display: block; }
+  .dif-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
+  .dif-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+
+  /* ── ETAPAS ── */
+  #etapas { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .etapas-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+  .timeline { position: relative; display: flex; flex-direction: column; }
+  .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--gold), transparent); opacity: 0.3; }
+  .timeline-item { display: flex; gap: 40px; padding: 40px 0 40px 60px; border-bottom: 1px solid var(--border); position: relative; }
+  .timeline-dot { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--gold); transition: background 0.3s, box-shadow 0.3s; z-index: 2; }
+  .timeline-item:hover .timeline-dot { background: var(--gold); box-shadow: 0 0 20px rgba(201,146,42,0.4); }
+  .timeline-step { font-size: 10px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
+  .timeline-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 10px; }
+  .timeline-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; max-width: 600px; }
+  .timeline-prazo { margin-left: auto; text-align: right; flex-shrink: 0; }
+  .prazo-num { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 900; color: var(--gold); line-height: 1; }
+  .prazo-label { font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; }
+
+  /* ── INVESTIMENTO ── */
+  #investimento { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
+  .inv-header { text-align: center; margin-bottom: 80px; }
+  .inv-header .section-label { justify-content: center; }
+  .inv-header .section-label::before { display: none; }
+
+  /* REVEAL BUTTON */
+  .reveal-gate { text-align: center; margin-bottom: 60px; }
+  .reveal-gate p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
+  .btn-reveal { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 18px 48px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; cursor: none; border-radius: 4px; transition: background 0.3s, color 0.3s; display: inline-flex; align-items: center; gap: 12px; }
+  .btn-reveal:hover { background: var(--gold); color: var(--bg); }
+  .btn-reveal .lock-icon { font-size: 16px; transition: transform 0.3s; }
+  .btn-reveal.unlocked .lock-icon { transform: rotate(-20deg); }
+  .pricing-wrapper { max-height: 0; overflow: hidden; transition: max-height 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease; opacity: 0; }
+  .pricing-wrapper.visible { max-height: 2000px; opacity: 1; }
+
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+  .pricing-card { background: var(--bg2); padding: 56px 40px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
+  .pricing-card:hover { background: var(--bg3); }
+  .pricing-card.featured { background: var(--bg3); }
+  .pricing-card.featured::after { content: 'RECOMENDADO'; position: absolute; top: 20px; right: -28px; background: var(--gold); color: var(--bg); font-size: 9px; font-weight: 700; letter-spacing: 0.15em; padding: 6px 40px; transform: rotate(45deg); }
+  .pricing-tier { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 500; margin-bottom: 12px; }
+  .p1 .pricing-tier { color: var(--teal-light); }
+  .p2 .pricing-tier { color: var(--gold); }
+  .p3 .pricing-tier { color: var(--red-light); }
+  .pricing-name { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; margin-bottom: 8px; line-height: 1.1; }
+  .pricing-objective { font-size: 13px; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; font-weight: 300; }
+  .price-display { margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
+  .price-installment { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 4px; }
+  .price-value { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 900; line-height: 1; color: var(--text); display: flex; align-items: flex-start; gap: 4px; }
+  .price-value sup { font-size: 20px; margin-top: 10px; font-weight: 300; }
+  .price-total { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
+  .pricing-features li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
+  .pricing-features li::before { content: '→'; flex-shrink: 0; font-family: 'Fraunces', serif; margin-top: 1px; }
+  .p1 .pricing-features li::before { color: var(--teal-light); }
+  .p2 .pricing-features li::before { color: var(--gold); }
+  .p3 .pricing-features li::before { color: var(--red-light); }
+  .pricing-cta { display: block; width: 100%; padding: 16px; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: all 0.3s; }
+  .p1 .pricing-cta { background: rgba(11,86,115,0.2); border: 1px solid var(--teal); color: var(--teal-light); }
+  .p2 .pricing-cta { background: var(--gold); color: var(--bg); border: 1px solid var(--gold); }
+  .p3 .pricing-cta { background: rgba(139,26,26,0.2); border: 1px solid var(--red-light); color: var(--red-light); }
+  .p1 .pricing-cta:hover { background: rgba(11,86,115,0.4); }
+  .p2 .pricing-cta:hover { background: var(--gold-light); }
+  .p3 .pricing-cta:hover { background: rgba(139,26,26,0.4); }
+
+  .budget-note { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 28px 32px; margin-top: 24px; display: flex; align-items: flex-start; gap: 20px; }
+  .budget-note-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+  .budget-note-text { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+  .budget-note-text strong { color: var(--text); font-weight: 500; }
+
+  /* ── ASSINATURA ── */
+  #assinatura { max-width: 1200px; margin: 0 auto; padding: 120px 24px 160px; }
+  .assinatura-inner { text-align: center; position: relative; }
+  .assinatura-ring { width: 200px; height: 200px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 60px; position: relative; }
+  .assinatura-ring::before { content: ''; position: absolute; inset: 12px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.08); }
+  .assinatura-ring-inner { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--red)); display: flex; align-items: center; justify-content: center; font-size: 28px; }
+  .assinatura-title { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.02em; }
+  .assinatura-sub { font-size: 16px; color: var(--text-muted); max-width: 480px; margin: 0 auto 48px; line-height: 1.7; font-weight: 300; }
+  .assinatura-validade { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 40px; }
+  .assinatura-validade strong { color: var(--gold); }
+  .assinatura-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-top: 80px; text-align: left; }
+  .party-block { background: var(--bg2); padding: 40px 40px 48px; }
+  .party-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 40px; }
+  .party-line { width: 100%; height: 1px; background: rgba(232,226,217,0.15); margin-bottom: 16px; }
+  .party-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .party-role { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
+
+  /* FOOTER */
+  footer { border-top: 1px solid var(--border); padding: 32px 24px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
+  .footer-brand { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; }
+  .footer-brand span { color: var(--red-light); }
+  .footer-info { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-align: right; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1024px) {
+    .pilares-grid { grid-template-columns: repeat(2, 1fr); }
+    .potencial-mosaic { grid-template-columns: 1fr 1fr; }
+    .pot-block.wide { grid-column: span 2; }
+    .pot-narrative { grid-template-columns: 1fr; gap: 40px; }
+  }
+  @media (max-width: 900px) {
+    .levels-intro, .etapas-header, .conteudo-header { grid-template-columns: 1fr; gap: 40px; }
+    .levels-grid, .pricing-grid, .funil { grid-template-columns: 1fr; }
+    .diferenciais-grid { grid-template-columns: 1fr 1fr; }
+    .assinatura-parties { grid-template-columns: 1fr; }
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .timeline-prazo { display: none; }
+    footer { flex-direction: column; gap: 12px; text-align: center; }
+    .footer-info { text-align: center; }
+    .potencial-mosaic { grid-template-columns: 1fr 1fr; }
+    .pot-block.wide { grid-column: span 2; }
+    .pot-block.tall { grid-row: auto; }
+  }
+  @media (max-width: 600px) {
+    .diferenciais-grid, .pilares-grid { grid-template-columns: 1fr; }
+    .potencial-mosaic { grid-template-columns: 1fr; }
+    .pot-block.wide { grid-column: span 1; }
+    #potencial, #conteudo, #pilares, #metodologia, #entregaveis, #diferenciais, #etapas, #investimento, #assinatura { padding: 80px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="nav-logo">paleta <span>food</span></div>
+  <ul class="nav-links">
+    <li><a href="#potencial">Potencial</a></li>
+    <li><a href="#pilares">Estratégia</a></li>
+    <li><a href="#metodologia">Metodologia</a></li>
+    <li><a href="#investimento">Investimento</a></li>
+  </ul>
+  <div class="nav-badge">Nº 033.2025</div>
+</nav>
+
+<!-- HERO -->
+<div id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line"></div>
+  <div class="hero-badge">Proposta Exclusiva · Loppifest</div>
+  <div class="hero-number">PROPOSTA DE PRESTAÇÃO DE SERVIÇO Nº 033.2025</div>
+  <h1 class="hero-title">
+    Mais eventos.<br>
+    <span class="accent-teal">Mais</span> <span class="accent-gold">pizza.</span><br>
+    <span class="accent-red">Mais resultado.</span>
+  </h1>
+  <p class="hero-sub">Uma assessoria de marketing estratégica construída para transformar o Loppifest no nome mais pedido nos eventos de Manaus.</p>
+  <div class="hero-cta">
+    <a href="#potencial" class="btn-primary">Ver o potencial</a>
+    <a href="#pilares" class="btn-ghost">A estratégia</a>
+  </div>
+  <div class="hero-scroll"><span>Role para ver</span><div class="scroll-line"></div></div>
+</div>
+
+<div class="divider"></div>
+
+<!-- POTENCIAL -->
+<div id="potencial">
+  <div class="potencial-header">
+    <div class="section-label reveal">O mercado</div>
+    <h2 class="section-title reveal reveal-delay-1">Manaus está crescendo.<br>O Loppifest também pode.</h2>
+    <p class="section-desc reveal reveal-delay-2">A cidade com maior crescimento populacional entre as grandes capitais do Brasil tem uma base industrial que gera renda, famílias que celebram e uma tradição gastronômica consolidada. O Loppifest está no lugar certo. O momento é agora.</p>
+  </div>
+
+  <div class="potencial-mosaic reveal reveal-delay-1">
+    <div class="pot-block pot-accent-teal">
+      <div class="pot-num">2,3M</div>
+      <div class="pot-unit">habitantes em Manaus</div>
+      <p class="pot-label">7ª capital mais populosa do Brasil, com <strong>crescimento de 1,05%</strong> em 2025 — maior entre as grandes capitais. Uma cidade em expansão, com novos bairros e novas famílias.</p>
+    </div>
+    <div class="pot-block pot-accent-gold">
+      <div class="pot-num">132k</div>
+      <div class="pot-unit">empregos diretos na ZFM</div>
+      <p class="pot-label">O Polo Industrial de Manaus fechou 2024 com <strong>R$ 204 bilhões</strong> de faturamento — recorde histórico. Renda estável, famílias com poder de consumo e cultura de celebração.</p>
+    </div>
+    <div class="pot-block pot-accent-red">
+      <div class="pot-num">+16%</div>
+      <div class="pot-unit">crescimento em eventos corporativos</div>
+      <p class="pot-label">O mercado de eventos no Brasil cresceu 16% nas solicitações de propostas em 2024. Manaus se posiciona como <strong>hub de eventos da Amazônia</strong> para 2026.</p>
+    </div>
+    <div class="pot-block wide pot-accent-gold" style="grid-column: span 3;">
+      <div class="pot-num" style="font-size: clamp(32px,4vw,56px); color: var(--gold);">500k+</div>
+      <div class="pot-unit">empregos diretos e indiretos gerados pela Zona Franca</div>
+      <p class="pot-label" style="max-width: 700px;">Meio milhão de pessoas com renda impactada pela ZFM. São <strong>famílias que trabalham, crescem e celebram</strong> — aniversários, formaturas, eventos corporativos, confraternizações. O Loppifest pode estar em todas essas celebrações.</p>
+    </div>
+  </div>
+
+  <div class="pot-narrative reveal reveal-delay-2" style="margin-top: 2px; background: var(--bg2); padding: 48px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;">
+    <div class="pot-narrative-text">
+      <h3>33 anos de Loppiano.<br>Uma herança de confiança.</h3>
+      <p>A Loppiano Pizza não é apenas um restaurante — é uma referência gastronômica em Manaus. Três décadas construindo um público fiel, atraindo famílias e se tornando sinônimo de qualidade na cidade.</p>
+      <p>O Loppifest nasce com essa herança. Não começa do zero — começa com credibilidade. A estratégia da Paleta Food é transformar esse ativo em demanda real de eventos: levando o nome Loppiano para aniversários, eventos corporativos e celebrações em toda Manaus.</p>
+    </div>
+    <div class="pot-loppiano">
+      <div class="pot-loppiano-stat">
+        <div class="big">33</div>
+        <div class="small">anos de tradição Loppiano em Manaus</div>
+      </div>
+      <div class="pot-loppiano-stat">
+        <div class="big">↑</div>
+        <div class="small">Crescimento contínuo de famílias no restaurante</div>
+      </div>
+      <div class="pot-loppiano-stat">
+        <div class="big">🍕</div>
+        <div class="small">Loppifest: a extensão natural para o mercado de eventos</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- CONTEÚDO -->
+<div id="conteudo">
+  <div class="conteudo-header">
+    <div>
+      <div class="section-label reveal">Produção de conteúdo</div>
+      <h2 class="section-title reveal reveal-delay-1">Cada post tem<br>um papel estratégico.</h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">Não produzimos conteúdo para preencher calendário. Cada peça é planejada para cumprir uma função específica no funil — atrair quem não conhece, convencer quem está em dúvida, reter quem já contratou.</p>
+  </div>
+
+  <div class="funil">
+    <div class="funil-stage fs-1 reveal">
+      <span class="funil-icon">📡</span>
+      <div class="funil-stage-label">Topo do funil</div>
+      <div class="funil-name">Presença</div>
+      <p class="funil-desc">Fazer o Loppifest existir no digital. Conteúdo que alcança quem ainda não te conhece — quem está planejando um evento mas ainda não sabe que você existe. O objetivo é ser encontrado.</p>
+      <div class="funil-formats">
+        <span class="funil-tag">Reels de bastidores</span>
+        <span class="funil-tag">Conteúdo de valor</span>
+        <span class="funil-tag">Stories diários</span>
+        <span class="funil-tag">Tráfego pago</span>
+      </div>
+    </div>
+    <div class="funil-stage fs-2 reveal reveal-delay-2">
+      <span class="funil-icon">🎯</span>
+      <div class="funil-stage-label">Meio do funil</div>
+      <div class="funil-name">Autoridade</div>
+      <p class="funil-desc">Transformar visitante em lead qualificado. Conteúdo que mostra competência, processo e resultado — para que o prospect confie antes de entrar em contato. O objetivo é ser escolhido.</p>
+      <div class="funil-formats">
+        <span class="funil-tag">Cases de eventos</span>
+        <span class="funil-tag">Depoimentos</span>
+        <span class="funil-tag">Diferenciais</span>
+        <span class="funil-tag">Prova social</span>
+      </div>
+    </div>
+    <div class="funil-stage fs-3 reveal reveal-delay-3">
+      <span class="funil-icon">🔁</span>
+      <div class="funil-stage-label">Fundo do funil</div>
+      <div class="funil-name">Conversão</div>
+      <p class="funil-desc">Transformar interesse em orçamento e orçamento em contrato. Conteúdo que empurra para a ação — com urgência, oferta clara e caminho simples para fechar. O objetivo é vender.</p>
+      <div class="funil-formats">
+        <span class="funil-tag">CTAs diretos</span>
+        <span class="funil-tag">Ofertas sazonais</span>
+        <span class="funil-tag">WhatsApp</span>
+        <span class="funil-tag">Retargeting</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- PILARES ESTRATÉGICOS -->
+<div id="pilares">
+  <div class="pilares-header">
+    <div class="section-label reveal">Direcionamento estratégico</div>
+    <h2 class="section-title reveal reveal-delay-1">Quatro pilares.<br>Um crescimento estruturado.</h2>
+    <p class="section-desc reveal reveal-delay-2">A Paleta Food não gerencia posts — gerencia crescimento. Cada pilar representa uma frente de trabalho que, juntas, constroem o Loppifest como referência no mercado de eventos de Manaus.</p>
+  </div>
+
+  <div class="pilares-grid">
+    <div class="pilar-card reveal">
+      <div class="pilar-arrow">→</div>
+      <div class="pilar-num">01</div>
+      <span class="pilar-icon">🔍</span>
+      <div class="pilar-title">Diagnóstico contínuo</div>
+      <p class="pilar-desc">Monitoramento ativo do mercado, da concorrência e da performance do Loppifest. Identificamos oportunidades antes que elas desapareçam e gargalos antes que virem problema.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-1">
+      <div class="pilar-arrow">→</div>
+      <div class="pilar-num">02</div>
+      <span class="pilar-icon">🧭</span>
+      <div class="pilar-title">Estratégia de crescimento</div>
+      <p class="pilar-desc">Planejamento baseado em dados, não em intuição. Definimos metas, segmentos de eventos prioritários e o caminho mais curto para aumentar o volume de contratos.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-2">
+      <div class="pilar-arrow">→</div>
+      <div class="pilar-num">03</div>
+      <span class="pilar-icon">⚡</span>
+      <div class="pilar-title">Execução com foco em venda</div>
+      <p class="pilar-desc">Tudo que produzimos tem um objetivo comercial. Conteúdo, tráfego, CRM, scripts — cada entrega é projetada para gerar demanda e fechar mais eventos.</p>
+    </div>
+    <div class="pilar-card reveal reveal-delay-3">
+      <div class="pilar-arrow">→</div>
+      <div class="pilar-num">04</div>
+      <span class="pilar-icon">📈</span>
+      <div class="pilar-title">Escala previsível</div>
+      <p class="pilar-desc">O objetivo final não é crescer uma vez — é crescer todo mês. Construímos processos, automações e sistemas que transformam o Loppifest numa máquina de eventos.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- METODOLOGIA -->
+<div id="metodologia">
+  <div class="levels-intro">
+    <div>
+      <div class="section-label reveal">Metodologia</div>
+      <h2 class="section-title reveal reveal-delay-1">Três níveis.<br>Um objetivo.</h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">Os serviços são entregues de forma progressiva. Cada nível acumula o anterior e amplia o resultado. Você escolhe onde quer chegar — nós construímos o caminho.</p>
+  </div>
+  <div class="levels-grid">
+    <div class="level-card l1 reveal">
+      <div class="level-number">1</div>
+      <div class="level-tag">Nível 1</div>
+      <div class="level-name">Atração</div>
+      <p class="level-desc">Trazer novos clientes para o Loppifest — no maior volume, com o melhor custo e no menor tempo possível. Estratégia digital completa para gerar demanda de eventos.</p>
+    </div>
+    <div class="level-card l2 reveal reveal-delay-2">
+      <div class="level-number">2</div>
+      <div class="level-tag">Nível 2</div>
+      <div class="level-name">Conversão</div>
+      <p class="level-desc">Atuar lado a lado com seu comercial, identificar gargalos, otimizar processos de fechamento e potencializar as vendas trazendo escala e previsibilidade para a operação.</p>
+    </div>
+    <div class="level-card l3 reveal reveal-delay-3">
+      <div class="level-number">3</div>
+      <div class="level-tag">Nível 3</div>
+      <div class="level-name">Retenção</div>
+      <p class="level-desc">Gerar novas oportunidades para quem ainda não fechou e novas vendas para quem já contratou. Automação, fidelização e recuperação de oportunidades perdidas.</p>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ENTREGAVEIS -->
+<div id="entregaveis">
+  <div style="margin-bottom:60px;">
+    <div class="section-label reveal">Entregáveis</div>
+    <h2 class="section-title reveal reveal-delay-1">O que está incluído<br>em cada nível.</h2>
+  </div>
+  <div class="tabs reveal reveal-delay-2">
+    <button class="tab active" onclick="switchTab(event,'tab1')">Nível 1 · Atração</button>
+    <button class="tab" onclick="switchTab(event,'tab2')">Nível 2 · Conversão</button>
+    <button class="tab" onclick="switchTab(event,'tab3')">Nível 3 · Retenção</button>
+  </div>
+  <div id="tab1" class="tab-content active">
+    <div class="deliverables-grid">
+      <div class="deliverable-item"><div class="del-icon l1-icon">📊</div><div class="del-text">Análise de Mercado e Posicionamento Digital</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">📡</div><div class="del-text">Implementação de Atendimento Omnichannel</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🧭</div><div class="del-text">Consultoria e Elaboração de Estratégia Comercial</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🔁</div><div class="del-text">Planejamento de Implementação de Funis de Marketing</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">⚡</div><div class="del-text">Gestão e Execução de Tráfego Pago Estratégico (Meta ADS)</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🎬</div><div class="del-text">01 Produção mensal de Conteúdo</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">📱</div><div class="del-text">Gerenciamento das Redes Sociais + Stories — 15 postagens · 90 stories/mês</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🍕</div><div class="del-text">Análise e Acompanhamento de Plataformas de Pedido</div></div>
+    </div>
+  </div>
+  <div id="tab2" class="tab-content">
+    <div class="deliverables-grid">
+      <div class="deliverable-item"><div class="del-icon l2-icon">📈</div><div class="del-text">Tudo do Nível 1 incluso</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">🔍</div><div class="del-text">Análise e Acompanhamento dos Canais de Venda</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">🛠️</div><div class="del-text">Consultoria e Implementação do CRM de Vendas</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">📋</div><div class="del-text">Elaboração do Playbook e Scripts de Vendas</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">👥</div><div class="del-text">Consultoria e Treinamento de Time Comercial</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">📊</div><div class="del-text">Gestão e Acompanhamento de Indicadores</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">📱</div><div class="del-text">Gerenciamento das Redes Sociais — 20 postagens · 150 stories/mês</div></div>
+    </div>
+  </div>
+  <div id="tab3" class="tab-content">
+    <div class="deliverables-grid">
+      <div class="deliverable-item"><div class="del-icon l3-icon">🏆</div><div class="del-text">Tudo do Nível 2 incluso</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">🤖</div><div class="del-text">Automação de Contatos de Relacionamento</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">💬</div><div class="del-text">Implementação de E-mail e WhatsApp Marketing</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">🎯</div><div class="del-text">Implementação de Estratégias de Fidelização</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">🔄</div><div class="del-text">Implementação de Estratégias de Recuperação de Clientes</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">📉</div><div class="del-text">Análise, Gestão e Otimização de Performance</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- DIFERENCIAIS -->
+<div id="diferenciais">
+  <div class="section-label reveal">Por que Paleta Food</div>
+  <h2 class="section-title reveal reveal-delay-1">Assessoria de valor.<br>Não de posts.</h2>
+  <p class="section-desc reveal reveal-delay-2">Diferente das agências tradicionais, entregamos além dos resultados operacionais — apoio tático e estratégico ao seu negócio.</p>
+  <div class="diferenciais-grid">
+    <div class="diferencial-card reveal"><span class="dif-num">01</span><span class="dif-icon">⚡</span><div class="dif-title">Start em 7 dias</div><p class="dif-desc">Campanhas rodando em até uma semana após a assinatura.</p></div>
+    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">02</span><span class="dif-icon">📊</span><div class="dif-title">Checkpoint mensal</div><p class="dif-desc">Resultados do mês, alinhamento de metas e evolução do projeto a cada ciclo.</p></div>
+    <div class="diferencial-card reveal reveal-delay-2"><span class="dif-num">03</span><span class="dif-icon">📄</span><div class="dif-title">Relatórios com plano de ação</div><p class="dif-desc">Não entregamos só números — entregamos o próximo passo.</p></div>
+    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">04</span><span class="dif-icon">🎯</span><div class="dif-title">Consultoria estratégica</div><p class="dif-desc">Para auxiliar nos desafios, demandas de leads e estratégias que vamos implementar juntos.</p></div>
+    <div class="diferencial-card reveal reveal-delay-2"><span class="dif-num">05</span><span class="dif-icon">🔍</span><div class="dif-title">Monitoramento ativo</div><p class="dif-desc">Identificação de baixa performance e tomadas de ação para garantir as metas.</p></div>
+    <div class="diferencial-card reveal reveal-delay-3"><span class="dif-num">06</span><span class="dif-icon">🤝</span><div class="dif-title">Rotinas garantidas</div><p class="dif-desc">Processos para garantir seu atendimento e execução de campanhas sem depender de sorte.</p></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ETAPAS -->
+<div id="etapas">
+  <div class="etapas-header">
+    <div>
+      <div class="section-label reveal">Cronograma</div>
+      <h2 class="section-title reveal reveal-delay-1">Como o projeto acontece.</h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">Cada etapa tem prazo definido em dias úteis. Alterações estendem o prazo equivalente — máximo de 3 alterações por entrega.</p>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item reveal"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 01</div><div class="timeline-title">Onboarding</div><p class="timeline-desc">Estruturação de infraestrutura, contas e serviços essenciais. Organização de perfis, Meta ADS, pixels, acessos e rastreamento de conversão.</p></div><div class="timeline-prazo"><div class="prazo-num">7</div><div class="prazo-label">dias úteis</div></div></div>
+    <div class="timeline-item reveal reveal-delay-1"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 02</div><div class="timeline-title">Campanhas</div><p class="timeline-desc">Planejamento, elaboração das estratégias e desenvolvimento das campanhas conforme os objetivos e nível de acesso do projeto.</p></div><div class="timeline-prazo"><div class="prazo-num">3</div><div class="prazo-label">dias úteis</div></div></div>
+    <div class="timeline-item reveal reveal-delay-2"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 03 · Contínuo</div><div class="timeline-title">Gestão Semanal</div><p class="timeline-desc">Acompanhamento premium com otimização de recursos, orçamento, medição de resultados e suporte especializado toda semana.</p></div><div class="timeline-prazo"><div class="prazo-num">1×</div><div class="prazo-label">por semana</div></div></div>
+    <div class="timeline-item reveal reveal-delay-3"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 04 · Contínuo</div><div class="timeline-title">Gestão Mensal</div><p class="timeline-desc">Relatório de resultados, alinhamento de expectativas e geração ativa de oportunidades para o próximo ciclo.</p></div><div class="timeline-prazo"><div class="prazo-num">1×</div><div class="prazo-label">por mês</div></div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- INVESTIMENTO -->
+<div id="investimento">
+  <div class="inv-header">
+    <div class="section-label reveal">Investimento</div>
+    <h2 class="section-title reveal reveal-delay-1">Escolha o seu nível.</h2>
+    <p class="section-desc reveal reveal-delay-2" style="margin: 0 auto 48px;">Cada plano é um contrato de 12 meses. O nível define a profundidade da parceria.</p>
+  </div>
+
+  <div class="reveal-gate reveal reveal-delay-3">
+    <p>Os valores estão disponíveis abaixo.<br>Quando estiver pronto para ver o investimento, clique para revelar.</p>
+    <button class="btn-reveal" id="revealBtn" onclick="revealPricing()">
+      <span class="lock-icon">🔒</span>
+      Revelar investimento
+    </button>
+  </div>
+
+  <div class="pricing-wrapper" id="pricingWrapper">
+    <div class="pricing-grid">
+      <div class="pricing-card p1">
+        <div class="pricing-tier">Nível 1</div>
+        <div class="pricing-name">Atração</div>
+        <p class="pricing-objective">Para o Loppifest que quer aparecer e gerar demanda de eventos no digital.</p>
+        <div class="price-display">
+          <div class="price-installment">12x de</div>
+          <div class="price-value"><sup>R$</sup><span class="counter" data-target="3000">3.000</span></div>
+          <div class="price-total">Total: R$ 36.000 / ano</div>
+        </div>
+        <ul class="pricing-features">
+          <li>Análise de mercado e posicionamento</li>
+          <li>Tráfego pago estratégico (Meta ADS)</li>
+          <li>15 postagens + 90 stories por mês</li>
+          <li>Produção de conteúdo mensal</li>
+          <li>Acompanhamento semanal e mensal</li>
+        </ul>
+        <a href="#assinatura" class="pricing-cta">Quero o Nível 1</a>
+      </div>
+      <div class="pricing-card p2 featured">
+        <div class="pricing-tier">Nível 2</div>
+        <div class="pricing-name">Conversão</div>
+        <p class="pricing-objective">Para quem quer fechar mais eventos e ter previsibilidade no comercial.</p>
+        <div class="price-display">
+          <div class="price-installment">12x de</div>
+          <div class="price-value"><sup>R$</sup><span class="counter" data-target="5000">5.000</span></div>
+          <div class="price-total">Total: R$ 60.000 / ano</div>
+        </div>
+        <ul class="pricing-features">
+          <li>Tudo do Nível 1</li>
+          <li>CRM de vendas + playbook</li>
+          <li>Treinamento do time comercial</li>
+          <li>20 postagens + 150 stories por mês</li>
+          <li>Gestão e acompanhamento de indicadores</li>
+        </ul>
+        <a href="#assinatura" class="pricing-cta">Quero o Nível 2</a>
+      </div>
+      <div class="pricing-card p3">
+        <div class="pricing-tier">Nível 3</div>
+        <div class="pricing-name">Retenção</div>
+        <p class="pricing-objective">Para escalar com automação, fidelização e máxima performance.</p>
+        <div class="price-display">
+          <div class="price-installment">12x de</div>
+          <div class="price-value"><sup>R$</sup><span class="counter" data-target="7500">7.500</span></div>
+          <div class="price-total">Total: R$ 90.000 / ano</div>
+        </div>
+        <ul class="pricing-features">
+          <li>Tudo do Nível 2</li>
+          <li>Automação de relacionamento</li>
+          <li>WhatsApp e e-mail marketing</li>
+          <li>Estratégias de fidelização e recuperação</li>
+          <li>Otimização de performance contínua</li>
+        </ul>
+        <a href="#assinatura" class="pricing-cta">Quero o Nível 3</a>
+      </div>
+    </div>
+    <div class="budget-note">
+      <div class="budget-note-icon">💡</div>
+      <div class="budget-note-text"><strong>Budget de campanhas (Meta ADS):</strong> Investimento mínimo recomendado de R$ 1.500/mês. Até R$ 5.000 sem custo adicional de gestão. Acima disso, 10% sobre o excedente. Licenças de ferramentas (Manychat Pro · R$149/mês e Kommo Avançado · R$142/mês) são de responsabilidade do contratante.</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ASSINATURA -->
+<div id="assinatura">
+  <div class="assinatura-inner">
+    <div class="assinatura-ring reveal">
+      <div class="assinatura-ring-inner">🍕</div>
+    </div>
+    <h2 class="assinatura-title reveal reveal-delay-1">Pronto para<br>crescer junto?</h2>
+    <p class="assinatura-sub reveal reveal-delay-2">Validade desta proposta: <strong>3 dias corridos</strong>. Após a assinatura, o projeto inicia em até 7 dias úteis.</p>
+    <div class="reveal reveal-delay-3">
+      <a href="https://wa.me/5592000000000" class="btn-primary" style="display:inline-flex; gap:10px; align-items:center;">💬 Vamos conversar</a>
+    </div>
+    <div class="assinatura-validade reveal reveal-delay-4">Validade: <strong>3 dias corridos</strong> a partir do envio</div>
+  </div>
+  <div class="assinatura-parties reveal reveal-delay-2">
+    <div class="party-block">
+      <div class="party-label">Contratante</div>
+      <div class="party-line"></div>
+      <div class="party-name">Loppifest</div>
+      <div class="party-role">Empresa de eventos gastronômicos · Manaus, AM</div>
+    </div>
+    <div class="party-block">
+      <div class="party-label">Contratada</div>
+      <div class="party-line"></div>
+      <div class="party-name">Luiz Antônio</div>
+      <div class="party-role">Paleta Food · Assessoria de Marketing · Manaus, AM</div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+<footer>
+  <div class="footer-brand">paleta <span>food</span></div>
+  <div class="footer-info">Assessoria de Marketing · Manaus, AM<br>Proposta Nº 033.2025 · propostaloppifest.paletamarketing.com.br</div>
+</footer>
+
+<script>
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
+    ring.style.left = mx + 'px'; ring.style.top = my + 'px';
+  });
+
+  // Scroll reveal
+  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+  // Counter
+  function animCounter(el) {
+    const target = parseInt(el.dataset.target);
+    const duration = 1600;
+    const start = performance.now();
+    function step(now) {
+      const p = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.floor(ease * target).toLocaleString('pt-BR');
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  // Reveal pricing
+  let revealed = false;
+  function revealPricing() {
+    if (revealed) return;
+    revealed = true;
+    const btn = document.getElementById('revealBtn');
+    const wrapper = document.getElementById('pricingWrapper');
+    btn.classList.add('unlocked');
+    btn.innerHTML = '<span class="lock-icon">🔓</span> Investimento revelado';
+    btn.disabled = true;
+    wrapper.classList.add('visible');
+    setTimeout(() => {
+      document.querySelectorAll('.counter').forEach(el => animCounter(el));
+    }, 400);
+  }
+
+  // Tabs
+  function switchTab(e, tabId) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    document.getElementById(tabId).classList.add('active');
+  }
+</script>
+</body>
+</html>
