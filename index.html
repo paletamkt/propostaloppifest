@@ -7,536 +7,389 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,700;0,900;1,300;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --teal: #0B5673;
-    --teal-light: #1a7a9e;
-    --red: #8B1A1A;
-    --red-light: #b02020;
-    --gold: #C9922A;
-    --gold-light: #e8b84b;
-    --bg: #070b0e;
-    --bg2: #0d1419;
-    --bg3: #111c23;
-    --text: #e8e2d9;
-    --text-muted: #8a9ba8;
-    --border: rgba(11,86,115,0.25);
-  }
+/* ── TOKENS ── */
+:root {
+  --teal: #0B5673; --teal-light: #1a7a9e;
+  --red: #8B1A1A;  --red-light: #b02020;
+  --gold: #C9922A; --gold-light: #e8b84b;
+  --bg: #070b0e; --bg2: #0d1419; --bg3: #111c23;
+  --text: #e8e2d9; --text-muted: #8a9ba8;
+  --border: rgba(11,86,115,0.25);
+  --r: 4px;
+  --gap: 2px;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-weight:300;overflow-x:hidden;}
+img{max-width:100%;}
 
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-  html { scroll-behavior: smooth; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-weight: 300; overflow-x: hidden; cursor: none; }
+/* ── GRAIN ── */
+body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");opacity:.025;pointer-events:none;z-index:900;}
 
-  .cursor { width: 12px; height: 12px; background: var(--gold); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%, -50%); mix-blend-mode: difference; }
-  .cursor-ring { width: 36px; height: 36px; border: 1px solid rgba(201,146,42,0.5); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transform: translate(-50%, -50%); transition: left 0.18s ease-out, top 0.18s ease-out; }
+/* ── CURSOR (desktop only) ── */
+@media(hover:hover){
+  body{cursor:none;}
+  .cursor{width:12px;height:12px;background:var(--gold);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:difference;}
+  .cursor-ring{width:36px;height:36px;border:1px solid rgba(201,146,42,.5);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .18s ease-out,top .18s ease-out;}
+  a,button{cursor:none;}
+}
 
-  body::before { content: ''; position: fixed; inset: 0; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E"); opacity: 0.025; pointer-events: none; z-index: 1000; }
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+@keyframes lineDown{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
+@keyframes scrollAnim{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform:scaleY(1);transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
 
-  /* NAV */
-  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; padding: 20px 40px; display: flex; align-items: center; justify-content: space-between; background: linear-gradient(to bottom, rgba(7,11,14,0.95), transparent); backdrop-filter: blur(8px); }
-  .nav-logo { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
-  .nav-logo span { color: var(--red-light); }
-  .nav-links { display: flex; gap: 32px; list-style: none; }
-  .nav-links a { font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); text-decoration: none; cursor: none; transition: color 0.3s; }
-  .nav-links a:hover { color: var(--gold); }
-  .nav-badge { font-size: 10px; letter-spacing: 0.1em; padding: 6px 16px; border: 1px solid rgba(201,146,42,0.3); color: var(--gold); border-radius: 2px; }
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity .8s ease,transform .8s ease;}
+.reveal.visible{opacity:1;transform:none;}
+.reveal-delay-1{transition-delay:.1s}.reveal-delay-2{transition-delay:.2s}.reveal-delay-3{transition-delay:.3s}.reveal-delay-4{transition-delay:.4s}
 
-  /* HERO */
-  #hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; overflow: hidden; text-align: center; padding: 60px 24px; }
-  .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(11,86,115,0.18) 0%, transparent 70%), radial-gradient(ellipse 60% 80% at 80% 30%, rgba(139,26,26,0.12) 0%, transparent 70%), radial-gradient(ellipse 40% 40% at 50% 90%, rgba(201,146,42,0.06) 0%, transparent 60%); }
-  .hero-line { position: absolute; top: 0; left: 50%; width: 1px; height: 100%; background: linear-gradient(to bottom, transparent, rgba(201,146,42,0.2) 40%, transparent); animation: lineDown 2s ease forwards; transform-origin: top; }
-  @keyframes lineDown { from { transform: scaleY(0); } to { transform: scaleY(1); } }
-  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(201,146,42,0.1); border: 1px solid rgba(201,146,42,0.3); border-radius: 100px; padding: 6px 18px; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 48px; opacity: 0; animation: fadeUp 0.8s 0.3s ease forwards; }
-  .hero-badge::before { content: ''; width: 6px; height: 6px; background: var(--gold); border-radius: 50%; animation: pulse 2s infinite; }
-  @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
-  .hero-number { font-family: 'Fraunces', serif; font-size: clamp(11px, 1.5vw, 14px); font-weight: 300; letter-spacing: 0.3em; color: var(--text-muted); margin-bottom: 20px; opacity: 0; animation: fadeUp 0.8s 0.5s ease forwards; }
-  .hero-title { font-family: 'Fraunces', serif; font-size: clamp(52px, 10vw, 120px); font-weight: 900; line-height: 0.9; letter-spacing: -0.03em; margin-bottom: 32px; opacity: 0; animation: fadeUp 1s 0.7s ease forwards; }
-  .hero-title span.accent-teal { color: var(--teal-light); }
-  .hero-title span.accent-red { color: var(--red-light); }
-  .hero-title span.accent-gold { color: var(--gold); }
-  .hero-sub { font-size: clamp(14px, 2vw, 18px); color: var(--text-muted); font-weight: 300; max-width: 520px; line-height: 1.7; margin-bottom: 60px; opacity: 0; animation: fadeUp 0.8s 1s ease forwards; }
-  .hero-cta { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; opacity: 0; animation: fadeUp 0.8s 1.2s ease forwards; }
-  .btn-primary { background: var(--gold); color: #070b0e; border: none; padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: background 0.3s, transform 0.2s; display: inline-block; }
-  .btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
-  .btn-ghost { background: transparent; color: var(--text); border: 1px solid rgba(232,226,217,0.2); padding: 16px 36px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 400; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: border-color 0.3s, color 0.3s, transform 0.2s; display: inline-block; }
-  .btn-ghost:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
-  .hero-scroll { position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeUp 0.8s 1.8s ease forwards; }
-  .hero-scroll span { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); }
-  .scroll-line { width: 1px; height: 50px; background: linear-gradient(to bottom, var(--gold), transparent); animation: scrollAnim 1.5s infinite; }
-  @keyframes scrollAnim { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+/* ── BUTTONS ── */
+.btn-primary{background:var(--gold);color:#070b0e;border:none;padding:15px 32px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:var(--r);transition:background .3s,transform .2s;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+.btn-primary:hover{background:var(--gold-light);transform:translateY(-2px);}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid rgba(232,226,217,.2);padding:15px 32px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:var(--r);transition:border-color .3s,color .3s,transform .2s;display:inline-flex;align-items:center;gap:8px;white-space:nowrap;}
+.btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px);}
 
-  /* DIVIDER */
-  .divider { width: 100%; height: 1px; background: var(--border); margin: 0; }
+/* ── DIVIDER ── */
+.divider{width:100%;height:1px;background:var(--border);}
 
-  /* SECTION BASE */
-  .section-label { font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
-  .section-label::before { content: ''; width: 32px; height: 1px; background: var(--gold); }
-  .section-title { font-family: 'Fraunces', serif; font-size: clamp(32px, 5vw, 60px); font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; margin-bottom: 24px; }
-  .section-desc { font-size: 16px; color: var(--text-muted); max-width: 600px; line-height: 1.8; font-weight: 300; }
+/* ── SECTION LABELS ── */
+.section-label{font-size:10px;letter-spacing:.35em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.section-label::before{content:'';width:32px;height:1px;background:var(--gold);}
+.section-title{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,60px);font-weight:700;line-height:1.1;letter-spacing:-.02em;margin-bottom:24px;}
+.section-desc{font-size:16px;color:var(--text-muted);line-height:1.8;font-weight:300;}
 
-  /* REVEAL */
-  .reveal { opacity: 0; transform: translateY(40px); transition: opacity 0.8s ease, transform 0.8s ease; }
-  .reveal.visible { opacity: 1; transform: translateY(0); }
-  .reveal-delay-1 { transition-delay: 0.1s; }
-  .reveal-delay-2 { transition-delay: 0.2s; }
-  .reveal-delay-3 { transition-delay: 0.3s; }
-  .reveal-delay-4 { transition-delay: 0.4s; }
-  .reveal-delay-5 { transition-delay: 0.5s; }
+/* ── SECTION WRAPPER ── */
+.sec{max-width:1200px;margin:0 auto;padding:80px 20px;}
+@media(min-width:768px){.sec{padding:120px 32px;}}
 
-  /* ── POTENCIAL ── */
-  #potencial { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .potencial-header { margin-bottom: 72px; }
-  .potencial-header .section-desc { max-width: 700px; }
+/* ── GRID HELPERS ── */
+.g2{display:grid;grid-template-columns:1fr;gap:40px;}
+.g3{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);}
+.g4{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:768px){
+  .g2{grid-template-columns:1fr 1fr;gap:60px;}
+  .g3{grid-template-columns:repeat(3,1fr);}
+  .g4{grid-template-columns:repeat(4,1fr);}
+}
 
-  .potencial-mosaic { display: grid; grid-template-columns: 1fr 1fr 1fr; grid-template-rows: auto auto; gap: 2px; background: var(--border); margin-bottom: 2px; }
-  .pot-block { background: var(--bg2); padding: 40px 36px; position: relative; overflow: hidden; transition: background 0.3s; cursor: none; }
-  .pot-block:hover { background: var(--bg3); }
-  .pot-block.wide { grid-column: span 2; }
-  .pot-block.tall { grid-row: span 2; }
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(to bottom,rgba(7,11,14,.95),transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);}
+.nav-logo{font-family:'Fraunces',serif;font-size:16px;font-weight:700;letter-spacing:-.02em;}
+.nav-logo span{color:var(--red-light);}
+.nav-links{display:none;gap:28px;list-style:none;}
+.nav-links a{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);text-decoration:none;transition:color .3s;}
+.nav-links a:hover{color:var(--gold);}
+.nav-cta{background:var(--gold);color:var(--bg);font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;padding:9px 18px;border-radius:var(--r);transition:background .3s;white-space:nowrap;}
+.nav-cta:hover{background:var(--gold-light);}
+@media(min-width:900px){
+  nav{padding:20px 40px;}
+  .nav-links{display:flex;}
+}
 
-  .pot-block::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px; transform: scaleX(0); transform-origin: left; transition: transform 0.5s ease; }
-  .pot-block:hover::after { transform: scaleX(1); }
-  .pot-accent-teal::after { background: var(--teal-light); }
-  .pot-accent-gold::after { background: var(--gold); }
-  .pot-accent-red::after { background: var(--red-light); }
+/* ── HERO ── */
+#hero{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;text-align:center;padding:80px 20px 60px;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(11,86,115,.18) 0%,transparent 70%),radial-gradient(ellipse 60% 80% at 80% 30%,rgba(139,26,26,.12) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 50% 90%,rgba(201,146,42,.06) 0%,transparent 60%);}
+.hero-line{position:absolute;top:0;left:50%;width:1px;height:100%;background:linear-gradient(to bottom,transparent,rgba(201,146,42,.2) 40%,transparent);animation:lineDown 2s ease forwards;transform-origin:top;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,146,42,.1);border:1px solid rgba(201,146,42,.3);border-radius:100px;padding:6px 16px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:32px;opacity:0;animation:fadeUp .8s .3s ease forwards;}
+.hero-badge::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0;}
+.hero-number{font-family:'Fraunces',serif;font-size:11px;font-weight:300;letter-spacing:.25em;color:var(--text-muted);margin-bottom:16px;opacity:0;animation:fadeUp .8s .5s ease forwards;}
+.hero-title{font-family:'Fraunces',serif;font-size:clamp(44px,12vw,120px);font-weight:900;line-height:.92;letter-spacing:-.03em;margin-bottom:28px;opacity:0;animation:fadeUp 1s .7s ease forwards;}
+.hero-title .accent-teal{color:var(--teal-light);}
+.hero-title .accent-red{color:var(--red-light);}
+.hero-title .accent-gold{color:var(--gold);}
+.hero-sub{font-size:clamp(14px,2.5vw,18px);color:var(--text-muted);font-weight:300;max-width:480px;line-height:1.7;margin-bottom:48px;opacity:0;animation:fadeUp .8s 1s ease forwards;}
+.hero-cta{display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;opacity:0;animation:fadeUp .8s 1.2s ease forwards;}
+.hero-cta .btn-primary,.hero-cta .btn-ghost{justify-content:center;width:100%;}
+@media(min-width:480px){.hero-cta{flex-direction:row;max-width:none;width:auto;}.hero-cta .btn-primary,.hero-cta .btn-ghost{width:auto;}}
+.hero-scroll{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp .8s 1.8s ease forwards;}
+.hero-scroll span{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--text-muted);}
+.scroll-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollAnim 1.5s infinite;}
 
-  .pot-num { font-family: 'Fraunces', serif; font-size: clamp(48px, 6vw, 80px); font-weight: 900; line-height: 1; margin-bottom: 8px; }
-  .pot-accent-teal .pot-num { color: var(--teal-light); }
-  .pot-accent-gold .pot-num { color: var(--gold); }
-  .pot-accent-red .pot-num { color: var(--red-light); }
-  .pot-unit { font-size: 12px; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; font-weight: 500; margin-bottom: 16px; }
-  .pot-label { font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300; }
-  .pot-label strong { color: var(--text); font-weight: 500; }
+/* ── POTENCIAL ── */
+.potencial-mosaic{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);margin-bottom:var(--gap);}
+@media(min-width:600px){.potencial-mosaic{grid-template-columns:1fr 1fr;}}
+@media(min-width:900px){.potencial-mosaic{grid-template-columns:1fr 1fr 1fr;}}
+.pot-block{background:var(--bg2);padding:32px 28px;position:relative;overflow:hidden;transition:background .3s;}
+.pot-block:hover{background:var(--bg3);}
+.pot-block.span2{grid-column:1/-1;}
+.pot-block::after{content:'';position:absolute;bottom:0;left:0;width:100%;height:2px;transform:scaleX(0);transform-origin:left;transition:transform .5s ease;}
+.pot-block:hover::after{transform:scaleX(1);}
+.pot-accent-teal::after{background:var(--teal-light);}
+.pot-accent-gold::after{background:var(--gold);}
+.pot-accent-red::after{background:var(--red-light);}
+.pot-num{font-family:'Fraunces',serif;font-size:clamp(40px,8vw,72px);font-weight:900;line-height:1;margin-bottom:6px;}
+.pot-accent-teal .pot-num{color:var(--teal-light);}
+.pot-accent-gold .pot-num{color:var(--gold);}
+.pot-accent-red .pot-num{color:var(--red-light);}
+.pot-unit{font-size:11px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;font-weight:500;margin-bottom:12px;}
+.pot-label{font-size:13px;color:var(--text-muted);line-height:1.7;font-weight:300;}
+.pot-label strong{color:var(--text);font-weight:500;}
 
-  .pot-narrative { background: var(--bg2); padding: 48px 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
-  .pot-narrative-text h3 { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; line-height: 1.2; margin-bottom: 20px; }
-  .pot-narrative-text p { font-size: 15px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
-  .pot-narrative-text p + p { margin-top: 16px; }
-  .pot-loppiano { display: flex; flex-direction: column; gap: 20px; }
-  .pot-loppiano-stat { padding: 24px 28px; background: var(--bg3); border-left: 3px solid var(--gold); }
-  .pot-loppiano-stat .big { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 900; color: var(--gold); line-height: 1; }
-  .pot-loppiano-stat .small { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; margin-top: 4px; }
+/* Pot story */
+.pot-story{background:var(--bg2);padding:40px 28px;margin-bottom:var(--gap);position:relative;overflow:hidden;}
+.pot-story-accent{position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(to bottom,var(--teal-light),var(--gold),var(--red-light));}
+.pot-story-grid{display:grid;grid-template-columns:1fr;gap:40px;align-items:start;}
+@media(min-width:768px){.pot-story-grid{grid-template-columns:1fr 1fr;gap:60px;}}
+.pot-story h3{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,32px);font-weight:700;line-height:1.2;margin-bottom:20px;}
+.pot-story p{font-size:14px;color:var(--text-muted);line-height:1.8;font-weight:300;}
+.pot-story p+p{margin-top:14px;}
+.pot-cards{display:flex;flex-direction:column;gap:var(--gap);background:var(--border);}
+.pot-card{background:var(--bg3);padding:22px 24px;}
+.pot-card-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;}
+.pot-card-teal .pot-card-label{color:var(--teal-light);}
+.pot-card-gold .pot-card-label{color:var(--gold);}
+.pot-card-red .pot-card-label{color:var(--red-light);}
+.pot-card p{font-size:13px;color:var(--text-muted);line-height:1.7;font-weight:300;}
 
-  /* ── CONTEÚDO ── */
-  #conteudo { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .conteudo-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
+/* Antes/depois */
+.antes-depois{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);margin-top:var(--gap);}
+@media(min-width:768px){.antes-depois{grid-template-columns:1fr 1fr;}}
+.ad-col{padding:36px 28px;}
+.ad-col-before{background:var(--bg2);}
+.ad-col-after{background:var(--bg3);}
+.ad-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:20px;}
+.ad-col-before .ad-label{color:var(--text-muted);}
+.ad-col-after .ad-label{color:var(--gold);}
+.ad-row{display:flex;gap:10px;align-items:flex-start;font-size:13px;line-height:1.5;margin-bottom:14px;}
+.ad-row:last-child{margin-bottom:0;}
+.ad-row-icon{flex-shrink:0;margin-top:1px;font-weight:700;}
 
-  .funil { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
-  .funil-stage { background: var(--bg2); padding: 48px 36px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
-  .funil-stage:hover { background: var(--bg3); }
-  .funil-stage::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; }
-  .fs-1::before { background: var(--teal-light); }
-  .fs-2::before { background: var(--gold); }
-  .fs-3::before { background: var(--red-light); }
+/* Section CTA */
+.sec-cta{text-align:center;padding-top:48px;}
+.sec-cta-label{font-size:13px;color:var(--text-muted);margin-bottom:18px;}
 
-  .funil-icon { font-size: 32px; margin-bottom: 24px; display: block; }
-  .funil-stage-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
-  .fs-1 .funil-stage-label { color: var(--teal-light); }
-  .fs-2 .funil-stage-label { color: var(--gold); }
-  .fs-3 .funil-stage-label { color: var(--red-light); }
-  .funil-name { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 700; margin-bottom: 16px; }
-  .funil-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300; margin-bottom: 24px; }
-  .funil-formats { display: flex; flex-wrap: wrap; gap: 8px; }
-  .funil-tag { font-size: 11px; padding: 4px 12px; border-radius: 100px; font-weight: 500; letter-spacing: 0.05em; }
-  .fs-1 .funil-tag { background: rgba(11,86,115,0.2); color: var(--teal-light); border: 1px solid rgba(11,86,115,0.3); }
-  .fs-2 .funil-tag { background: rgba(201,146,42,0.15); color: var(--gold); border: 1px solid rgba(201,146,42,0.3); }
-  .fs-3 .funil-tag { background: rgba(139,26,26,0.2); color: var(--red-light); border: 1px solid rgba(139,26,26,0.3); }
+/* ── CONTEÚDO / FUNIL ── */
+.funil{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:768px){.funil{grid-template-columns:repeat(3,1fr);}}
+.funil-stage{background:var(--bg2);padding:40px 28px;position:relative;overflow:hidden;transition:background .4s;}
+.funil-stage:hover{background:var(--bg3);}
+.funil-stage::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;}
+.fs-1::before{background:var(--teal-light)}.fs-2::before{background:var(--gold)}.fs-3::before{background:var(--red-light)}
+.funil-icon{font-size:28px;margin-bottom:20px;display:block;}
+.funil-stage-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;font-weight:500;margin-bottom:6px;}
+.fs-1 .funil-stage-label{color:var(--teal-light)}.fs-2 .funil-stage-label{color:var(--gold)}.fs-3 .funil-stage-label{color:var(--red-light)}
+.funil-name{font-family:'Fraunces',serif;font-size:22px;font-weight:700;margin-bottom:14px;}
+.funil-desc{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300;margin-bottom:20px;}
+.funil-formats{display:flex;flex-wrap:wrap;gap:6px;}
+.funil-tag{font-size:10px;padding:4px 10px;border-radius:100px;font-weight:500;}
+.fs-1 .funil-tag{background:rgba(11,86,115,.2);color:var(--teal-light);border:1px solid rgba(11,86,115,.3);}
+.fs-2 .funil-tag{background:rgba(201,146,42,.15);color:var(--gold);border:1px solid rgba(201,146,42,.3);}
+.fs-3 .funil-tag{background:rgba(139,26,26,.2);color:var(--red-light);border:1px solid rgba(139,26,26,.3);}
 
-  /* ── PILARES ── */
-  #pilares { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .pilares-header { margin-bottom: 72px; }
+/* ── PILARES ── */
+.pilares-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:900px){.pilares-grid{grid-template-columns:repeat(4,1fr);}}
+.pilar-card{background:var(--bg2);padding:36px 28px;position:relative;overflow:hidden;transition:background .4s;}
+.pilar-card:hover{background:var(--bg3);}
+.pilar-arrow{position:absolute;top:20px;right:20px;font-size:18px;color:var(--gold);opacity:0;transition:opacity .3s,transform .3s;transform:translateX(-6px);}
+.pilar-card:hover .pilar-arrow{opacity:1;transform:translateX(0);}
+.pilar-num{font-family:'Fraunces',serif;font-size:56px;font-weight:900;line-height:1;color:rgba(201,146,42,.06);margin-bottom:20px;}
+.pilar-icon{font-size:24px;margin-bottom:16px;display:block;}
+.pilar-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.2;}
+.pilar-desc{font-size:12px;color:var(--text-muted);line-height:1.8;font-weight:300;}
 
-  .pilares-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; background: var(--border); }
-  .pilar-card { background: var(--bg2); padding: 48px 32px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
-  .pilar-card:hover { background: var(--bg3); }
-  .pilar-arrow { position: absolute; top: 28px; right: 28px; font-size: 20px; color: var(--gold); opacity: 0; transition: opacity 0.3s, transform 0.3s; transform: translateX(-8px); }
-  .pilar-card:hover .pilar-arrow { opacity: 1; transform: translateX(0); }
-  .pilar-num { font-family: 'Fraunces', serif; font-size: 64px; font-weight: 900; line-height: 1; color: rgba(201,146,42,0.06); margin-bottom: 24px; }
-  .pilar-icon { font-size: 28px; margin-bottom: 20px; display: block; }
-  .pilar-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
-  .pilar-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+/* ── MID-PAGE CTA ── */
+.mid-cta{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.mid-cta-inner{max-width:1200px;margin:0 auto;padding:48px 20px;display:flex;flex-direction:column;gap:28px;}
+@media(min-width:768px){.mid-cta-inner{flex-direction:row;align-items:center;justify-content:space-between;padding:56px 32px;}}
+.mid-cta-eyebrow{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:10px;}
+.mid-cta-title{font-family:'Fraunces',serif;font-size:clamp(20px,3vw,32px);font-weight:700;line-height:1.2;letter-spacing:-.02em;}
+.mid-cta-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;}
+@media(min-width:480px){.mid-cta-actions{flex-direction:row;}}
 
-  /* ── METODOLOGIA ── */
-  #metodologia { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .levels-intro { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
-  .levels-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
-  .level-card { background: var(--bg2); padding: 48px 36px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
-  .level-card:hover { background: var(--bg3); }
-  .level-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; opacity: 0.6; transition: opacity 0.3s; }
-  .level-card:hover::before { opacity: 1; }
-  .level-card.l1::before { background: var(--teal); }
-  .level-card.l2::before { background: var(--gold); }
-  .level-card.l3::before { background: var(--red-light); }
-  .level-number { font-family: 'Fraunces', serif; font-size: 80px; font-weight: 900; line-height: 1; opacity: 0.08; position: absolute; top: 20px; right: 24px; pointer-events: none; }
-  .level-tag { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 12px; font-weight: 500; }
-  .l1 .level-tag { color: var(--teal-light); }
-  .l2 .level-tag { color: var(--gold); }
-  .l3 .level-tag { color: var(--red-light); }
-  .level-name { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; margin-bottom: 16px; line-height: 1.2; }
-  .level-desc { font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+/* ── METODOLOGIA ── */
+.levels-intro{display:grid;grid-template-columns:1fr;gap:32px;margin-bottom:48px;}
+@media(min-width:768px){.levels-intro{grid-template-columns:1fr 1fr;gap:80px;align-items:end;margin-bottom:64px;}}
+.levels-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:768px){.levels-grid{grid-template-columns:repeat(3,1fr);}}
+.level-card{background:var(--bg2);padding:40px 28px;position:relative;overflow:hidden;transition:background .4s;}
+.level-card:hover{background:var(--bg3);}
+.level-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;opacity:.6;transition:opacity .3s;}
+.level-card:hover::before{opacity:1;}
+.l1::before{background:var(--teal)}.l2::before{background:var(--gold)}.l3::before{background:var(--red-light)}
+.level-number{font-family:'Fraunces',serif;font-size:72px;font-weight:900;line-height:1;opacity:.07;position:absolute;top:16px;right:20px;pointer-events:none;}
+.level-tag{font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:10px;font-weight:500;}
+.l1 .level-tag{color:var(--teal-light)}.l2 .level-tag{color:var(--gold)}.l3 .level-tag{color:var(--red-light)}
+.level-name{font-family:'Fraunces',serif;font-size:24px;font-weight:700;margin-bottom:14px;line-height:1.2;}
+.level-desc{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300;}
 
-  /* ── ENTREGAVEIS ── */
-  #entregaveis { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .tabs { display: flex; gap: 2px; margin-bottom: 48px; background: var(--border); padding: 2px; width: fit-content; }
-  .tab { padding: 12px 28px; font-size: 12px; letter-spacing: 0.15em; text-transform: uppercase; background: transparent; border: none; color: var(--text-muted); cursor: none; transition: all 0.3s; font-family: 'DM Sans', sans-serif; font-weight: 500; }
-  .tab.active { background: var(--bg3); color: var(--text); }
-  .tab:hover:not(.active) { color: var(--text); }
-  .tab-content { display: none; }
-  .tab-content.active { display: block; }
-  .deliverables-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 2px; background: var(--border); }
-  .deliverable-item { background: var(--bg2); padding: 28px 32px; display: flex; align-items: flex-start; gap: 16px; transition: background 0.3s; cursor: none; }
-  .deliverable-item:hover { background: var(--bg3); }
-  .del-icon { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px; }
-  .l1-icon { background: rgba(11,86,115,0.2); border: 1px solid rgba(11,86,115,0.4); }
-  .l2-icon { background: rgba(201,146,42,0.15); border: 1px solid rgba(201,146,42,0.3); }
-  .l3-icon { background: rgba(139,26,26,0.2); border: 1px solid rgba(139,26,26,0.4); }
-  .del-text { font-size: 14px; color: var(--text); font-weight: 400; line-height: 1.5; }
+/* ── ENTREGÁVEIS ── */
+.tabs{display:flex;gap:var(--gap);margin-bottom:32px;background:var(--border);padding:var(--gap);overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.tab{padding:12px 20px;font-size:11px;letter-spacing:.12em;text-transform:uppercase;background:transparent;border:none;color:var(--text-muted);transition:all .3s;font-family:'DM Sans',sans-serif;font-weight:500;white-space:nowrap;cursor:pointer;}
+.tab.active{background:var(--bg3);color:var(--text);}
+.tab:hover:not(.active){color:var(--text);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+.deliverables-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:600px){.deliverables-grid{grid-template-columns:repeat(2,1fr);}}
+.deliverable-item{background:var(--bg2);padding:22px 24px;display:flex;align-items:flex-start;gap:14px;transition:background .3s;}
+.deliverable-item:hover{background:var(--bg3);}
+.del-icon{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px;}
+.l1-icon{background:rgba(11,86,115,.2);border:1px solid rgba(11,86,115,.4);}
+.l2-icon{background:rgba(201,146,42,.15);border:1px solid rgba(201,146,42,.3);}
+.l3-icon{background:rgba(139,26,26,.2);border:1px solid rgba(139,26,26,.4);}
+.del-text{font-size:13px;color:var(--text);font-weight:400;line-height:1.5;}
 
-  /* ── DIFERENCIAIS ── */
-  #diferenciais { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .diferenciais-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); margin-top: 64px; }
-  .diferencial-card { background: var(--bg2); padding: 40px 32px; position: relative; overflow: hidden; cursor: none; transition: background 0.3s; }
-  .diferencial-card:hover { background: var(--bg3); }
-  .dif-num { font-family: 'Fraunces', serif; font-size: 72px; font-weight: 900; line-height: 1; color: rgba(201,146,42,0.06); position: absolute; top: 12px; right: 16px; }
-  .dif-icon { font-size: 24px; margin-bottom: 20px; display: block; }
-  .dif-title { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 700; margin-bottom: 12px; line-height: 1.2; }
-  .dif-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
+/* ── DIFERENCIAIS ── */
+.diferenciais-grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--gap);background:var(--border);margin-top:48px;}
+@media(min-width:900px){.diferenciais-grid{grid-template-columns:repeat(3,1fr);}}
+.diferencial-card{background:var(--bg2);padding:36px 28px;position:relative;overflow:hidden;transition:background .3s;}
+.diferencial-card:hover{background:var(--bg3);}
+.dif-num{font-family:'Fraunces',serif;font-size:64px;font-weight:900;line-height:1;color:rgba(201,146,42,.06);position:absolute;top:10px;right:14px;}
+.dif-icon{font-size:22px;margin-bottom:16px;display:block;}
+.dif-title{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:10px;line-height:1.2;}
+.dif-desc{font-size:12px;color:var(--text-muted);line-height:1.8;font-weight:300;}
 
-  /* ── ETAPAS ── */
-  #etapas { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .etapas-header { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: end; margin-bottom: 80px; }
-  .timeline { position: relative; display: flex; flex-direction: column; }
-  .timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 1px; background: linear-gradient(to bottom, var(--gold), transparent); opacity: 0.3; }
-  .timeline-item { display: flex; gap: 40px; padding: 40px 0 40px 60px; border-bottom: 1px solid var(--border); position: relative; }
-  .timeline-dot { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; border-radius: 50%; background: var(--bg); border: 2px solid var(--gold); transition: background 0.3s, box-shadow 0.3s; z-index: 2; }
-  .timeline-item:hover .timeline-dot { background: var(--gold); box-shadow: 0 0 20px rgba(201,146,42,0.4); }
-  .timeline-step { font-size: 10px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; font-weight: 500; margin-bottom: 8px; }
-  .timeline-title { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-  .timeline-desc { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; max-width: 600px; }
-  .timeline-prazo { margin-left: auto; text-align: right; flex-shrink: 0; }
-  .prazo-num { font-family: 'Fraunces', serif; font-size: 36px; font-weight: 900; color: var(--gold); line-height: 1; }
-  .prazo-label { font-size: 10px; letter-spacing: 0.15em; color: var(--text-muted); text-transform: uppercase; }
+/* ── ETAPAS ── */
+.etapas-header{display:grid;grid-template-columns:1fr;gap:32px;margin-bottom:48px;}
+@media(min-width:768px){.etapas-header{grid-template-columns:1fr 1fr;gap:80px;align-items:end;}}
+.timeline{position:relative;display:flex;flex-direction:column;}
+.timeline::before{content:'';position:absolute;left:16px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold),transparent);opacity:.3;}
+.timeline-item{display:flex;gap:0;padding:28px 0 28px 44px;border-bottom:1px solid var(--border);position:relative;}
+.timeline-dot{position:absolute;left:8px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--bg);border:2px solid var(--gold);transition:background .3s,box-shadow .3s;z-index:2;}
+.timeline-item:hover .timeline-dot{background:var(--gold);box-shadow:0 0 20px rgba(201,146,42,.4);}
+.timeline-step{font-size:10px;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;font-weight:500;margin-bottom:6px;}
+.timeline-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+.timeline-desc{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300;}
+.timeline-prazo{display:none;}
+@media(min-width:768px){
+  .timeline-item{gap:40px;}
+  .timeline-prazo{display:block;margin-left:auto;text-align:right;flex-shrink:0;}
+  .prazo-num{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--gold);line-height:1;}
+  .prazo-label{font-size:10px;letter-spacing:.15em;color:var(--text-muted);text-transform:uppercase;}
+}
 
-  /* ── INVESTIMENTO ── */
-  #investimento { max-width: 1200px; margin: 0 auto; padding: 120px 24px; }
-  .inv-header { text-align: center; margin-bottom: 80px; }
-  .inv-header .section-label { justify-content: center; }
-  .inv-header .section-label::before { display: none; }
+/* ── COMPARAÇÃO ── */
+.comparacao-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);margin-bottom:var(--gap);}
+@media(min-width:768px){.comparacao-grid{grid-template-columns:1fr 1fr;}}
+.cmp-col{padding:36px 28px;}
+.cmp-col-before{background:var(--bg2);}
+.cmp-col-after{background:var(--bg3);position:relative;overflow:hidden;}
+.cmp-col-after::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(to right,var(--teal-light),var(--gold));}
+.cmp-header{font-size:10px;letter-spacing:.25em;text-transform:uppercase;margin-bottom:24px;display:flex;align-items:center;gap:10px;}
+.cmp-header-before{color:var(--text-muted);}
+.cmp-header-after{color:var(--gold);}
+.cmp-header span{display:inline-block;width:20px;height:1px;}
+.cmp-header-before span{background:var(--text-muted);}
+.cmp-header-after span{background:var(--gold);}
+.cmp-rows{display:flex;flex-direction:column;gap:var(--gap);background:var(--border);}
+.cmp-row{background:var(--bg3);padding:16px 20px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;}
+.cmp-col-after .cmp-row{background:var(--bg2);}
+.cmp-row-label{font-size:13px;font-weight:500;color:var(--text);}
+.cmp-row-sub{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.cmp-row-price{font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--text-muted);white-space:nowrap;flex-shrink:0;}
+.cmp-total{margin-top:var(--gap);padding:24px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
+.cmp-col-before .cmp-total{background:var(--bg);border:1px solid rgba(232,226,217,.08);}
+.cmp-col-after .cmp-total{background:rgba(201,146,42,.08);border:1px solid rgba(201,146,42,.25);}
+.cmp-total-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;}
+.cmp-col-before .cmp-total-label{color:var(--text-muted);}
+.cmp-col-after .cmp-total-label{color:var(--gold);}
+.cmp-total-sub{font-size:11px;color:var(--text-muted);opacity:.7;}
+.cmp-total-price{font-family:'Fraunces',serif;font-size:36px;font-weight:900;line-height:1;}
+.cmp-col-before .cmp-total-price{color:var(--text);}
+.cmp-col-after .cmp-total-price{color:var(--gold);}
+.cmp-total-period{font-size:11px;color:var(--text-muted);margin-top:2px;}
+.cmp-savings{margin-top:var(--gap);background:rgba(11,86,115,.15);border:1px solid rgba(11,86,115,.3);padding:18px 20px;display:flex;align-items:center;gap:14px;}
+.cmp-savings-num{font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--teal-light);flex-shrink:0;}
+.cmp-savings-text{font-size:12px;color:var(--text-muted);line-height:1.6;}
+.cmp-note{margin-top:var(--gap);font-size:11px;color:var(--text-muted);line-height:1.7;opacity:.7;}
+.cmp-features{display:flex;flex-direction:column;gap:var(--gap);background:var(--border);margin-bottom:var(--gap);}
+.cmp-feature{background:var(--bg2);padding:16px 20px;display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);line-height:1.5;}
+.cmp-feature-arrow{color:var(--gold);flex-shrink:0;margin-top:1px;}
 
-  /* REVEAL BUTTON */
-  .reveal-gate { text-align: center; margin-bottom: 60px; }
-  .reveal-gate p { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; line-height: 1.6; }
-  .btn-reveal { background: transparent; border: 1px solid var(--gold); color: var(--gold); padding: 18px 48px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; cursor: none; border-radius: 4px; transition: background 0.3s, color 0.3s; display: inline-flex; align-items: center; gap: 12px; }
-  .btn-reveal:hover { background: var(--gold); color: var(--bg); }
-  .btn-reveal .lock-icon { font-size: 16px; transition: transform 0.3s; }
-  .btn-reveal.unlocked .lock-icon { transform: rotate(-20deg); }
-  .pricing-wrapper { max-height: 0; overflow: hidden; transition: max-height 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease; opacity: 0; }
-  .pricing-wrapper.visible { max-height: 2000px; opacity: 1; }
+/* ── INVESTIMENTO ── */
+.inv-header{text-align:center;margin-bottom:48px;}
+.inv-header .section-label{justify-content:center;}
+.inv-header .section-label::before{display:none;}
+.btn-reveal{background:transparent;border:1px solid var(--gold);color:var(--gold);padding:16px 36px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;border-radius:var(--r);transition:background .3s,color .3s;display:inline-flex;align-items:center;gap:10px;}
+.btn-reveal:hover{background:var(--gold);color:var(--bg);}
+.reveal-gate{text-align:center;margin-bottom:40px;}
+.reveal-gate p{font-size:14px;color:var(--text-muted);margin-bottom:20px;line-height:1.6;}
+.lock-icon{font-size:16px;transition:transform .3s;}
+.btn-reveal.unlocked .lock-icon{transform:rotate(-20deg);}
+.pricing-wrapper{max-height:0;overflow:hidden;transition:max-height 1.2s cubic-bezier(.16,1,.3,1),opacity .8s ease;opacity:0;}
+.pricing-wrapper.visible{max-height:3000px;opacity:1;}
+.pricing-grid{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);}
+@media(min-width:768px){.pricing-grid{grid-template-columns:repeat(3,1fr);}}
+.pricing-card{background:var(--bg2);padding:40px 28px;position:relative;overflow:hidden;transition:background .4s;}
+.pricing-card:hover{background:var(--bg3);}
+.pricing-card.featured{background:var(--bg3);}
+.pricing-card.featured::after{content:'RECOMENDADO';position:absolute;top:20px;right:-28px;background:var(--gold);color:var(--bg);font-size:9px;font-weight:700;letter-spacing:.15em;padding:6px 40px;transform:rotate(45deg);}
+.pricing-tier{font-size:10px;letter-spacing:.3em;text-transform:uppercase;font-weight:500;margin-bottom:10px;}
+.p1 .pricing-tier{color:var(--teal-light)}.p2 .pricing-tier{color:var(--gold)}.p3 .pricing-tier{color:var(--red-light)}
+.pricing-name{font-family:'Fraunces',serif;font-size:28px;font-weight:700;margin-bottom:8px;line-height:1.1;}
+.pricing-objective{font-size:13px;color:var(--text-muted);margin-bottom:32px;line-height:1.6;font-weight:300;}
+.price-display{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--border);}
+.price-installment{font-size:12px;color:var(--text-muted);margin-bottom:4px;}
+.price-value{font-family:'Fraunces',serif;font-size:clamp(40px,8vw,52px);font-weight:900;line-height:1;color:var(--text);display:flex;align-items:flex-start;gap:4px;}
+.price-value sup{font-size:18px;margin-top:8px;font-weight:300;}
+.price-total{font-size:12px;color:var(--text-muted);margin-top:6px;}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;}
+.pricing-features li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text-muted);line-height:1.5;font-weight:300;}
+.pricing-features li::before{content:'→';flex-shrink:0;font-family:'Fraunces',serif;margin-top:1px;}
+.p1 .pricing-features li::before{color:var(--teal-light)}.p2 .pricing-features li::before{color:var(--gold)}.p3 .pricing-features li::before{color:var(--red-light)}
+.pricing-cta{display:block;width:100%;padding:14px;text-align:center;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-radius:var(--r);transition:all .3s;cursor:pointer;}
+.p1 .pricing-cta{background:rgba(11,86,115,.2);border:1px solid var(--teal);color:var(--teal-light);}
+.p2 .pricing-cta{background:var(--gold);color:var(--bg);border:1px solid var(--gold);}
+.p3 .pricing-cta{background:rgba(139,26,26,.2);border:1px solid var(--red-light);color:var(--red-light);}
+.p1 .pricing-cta:hover{background:rgba(11,86,115,.4);}
+.p2 .pricing-cta:hover{background:var(--gold-light);}
+.p3 .pricing-cta:hover{background:rgba(139,26,26,.4);}
+.budget-note{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--gold);padding:24px 28px;margin-top:var(--gap);display:flex;align-items:flex-start;gap:16px;}
+.budget-note-icon{font-size:18px;flex-shrink:0;margin-top:2px;}
+.budget-note-text{font-size:13px;color:var(--text-muted);line-height:1.8;font-weight:300;}
+.budget-note-text strong{color:var(--text);font-weight:500;}
 
-  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
-  .pricing-card { background: var(--bg2); padding: 56px 40px; position: relative; overflow: hidden; cursor: none; transition: background 0.4s; }
-  .pricing-card:hover { background: var(--bg3); }
-  .pricing-card.featured { background: var(--bg3); }
-  .pricing-card.featured::after { content: 'RECOMENDADO'; position: absolute; top: 20px; right: -28px; background: var(--gold); color: var(--bg); font-size: 9px; font-weight: 700; letter-spacing: 0.15em; padding: 6px 40px; transform: rotate(45deg); }
-  .pricing-tier { font-size: 10px; letter-spacing: 0.3em; text-transform: uppercase; font-weight: 500; margin-bottom: 12px; }
-  .p1 .pricing-tier { color: var(--teal-light); }
-  .p2 .pricing-tier { color: var(--gold); }
-  .p3 .pricing-tier { color: var(--red-light); }
-  .pricing-name { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; margin-bottom: 8px; line-height: 1.1; }
-  .pricing-objective { font-size: 13px; color: var(--text-muted); margin-bottom: 40px; line-height: 1.6; font-weight: 300; }
-  .price-display { margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid var(--border); }
-  .price-installment { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; margin-bottom: 4px; }
-  .price-value { font-family: 'Fraunces', serif; font-size: 52px; font-weight: 900; line-height: 1; color: var(--text); display: flex; align-items: flex-start; gap: 4px; }
-  .price-value sup { font-size: 20px; margin-top: 10px; font-weight: 300; }
-  .price-total { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
-  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
-  .pricing-features li { display: flex; align-items: flex-start; gap: 12px; font-size: 13px; color: var(--text-muted); line-height: 1.5; font-weight: 300; }
-  .pricing-features li::before { content: '→'; flex-shrink: 0; font-family: 'Fraunces', serif; margin-top: 1px; }
-  .p1 .pricing-features li::before { color: var(--teal-light); }
-  .p2 .pricing-features li::before { color: var(--gold); }
-  .p3 .pricing-features li::before { color: var(--red-light); }
-  .pricing-cta { display: block; width: 100%; padding: 16px; text-align: center; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; border-radius: 4px; cursor: none; transition: all 0.3s; }
-  .p1 .pricing-cta { background: rgba(11,86,115,0.2); border: 1px solid var(--teal); color: var(--teal-light); }
-  .p2 .pricing-cta { background: var(--gold); color: var(--bg); border: 1px solid var(--gold); }
-  .p3 .pricing-cta { background: rgba(139,26,26,0.2); border: 1px solid var(--red-light); color: var(--red-light); }
-  .p1 .pricing-cta:hover { background: rgba(11,86,115,0.4); }
-  .p2 .pricing-cta:hover { background: var(--gold-light); }
-  .p3 .pricing-cta:hover { background: rgba(139,26,26,0.4); }
+/* ── ASSINATURA ── */
+.assinatura-inner{text-align:center;}
+.assinatura-ring{width:160px;height:160px;border-radius:50%;border:1px solid rgba(201,146,42,.15);display:flex;align-items:center;justify-content:center;margin:0 auto 48px;position:relative;}
+.assinatura-ring::before{content:'';position:absolute;inset:12px;border-radius:50%;border:1px solid rgba(201,146,42,.08);}
+.assinatura-ring-inner{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--red));display:flex;align-items:center;justify-content:center;font-size:24px;}
+.assinatura-title{font-family:'Fraunces',serif;font-size:clamp(28px,6vw,56px);font-weight:900;line-height:1.1;margin-bottom:20px;letter-spacing:-.02em;}
+.assinatura-sub{font-size:15px;color:var(--text-muted);max-width:440px;margin:0 auto 36px;line-height:1.7;font-weight:300;}
+.assinatura-cta{display:flex;flex-direction:column;gap:12px;align-items:center;}
+@media(min-width:480px){.assinatura-cta{flex-direction:row;justify-content:center;}}
+.assinatura-validade{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--text-muted);margin-top:32px;}
+.assinatura-validade strong{color:var(--gold);}
+.assinatura-parties{display:grid;grid-template-columns:1fr;gap:var(--gap);background:var(--border);margin-top:64px;}
+@media(min-width:600px){.assinatura-parties{grid-template-columns:1fr 1fr;}}
+.party-block{background:var(--bg2);padding:32px 28px 40px;}
+.party-label{font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--text-muted);margin-bottom:36px;}
+.party-line{width:100%;height:1px;background:rgba(232,226,217,.15);margin-bottom:14px;}
+.party-name{font-family:'Fraunces',serif;font-size:18px;font-weight:700;margin-bottom:4px;}
+.party-role{font-size:12px;color:var(--text-muted);}
 
-  .budget-note { background: var(--bg2); border: 1px solid var(--border); border-left: 3px solid var(--gold); padding: 28px 32px; margin-top: 24px; display: flex; align-items: flex-start; gap: 20px; }
-  .budget-note-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
-  .budget-note-text { font-size: 13px; color: var(--text-muted); line-height: 1.8; font-weight: 300; }
-  .budget-note-text strong { color: var(--text); font-weight: 500; }
+/* ── FOOTER ── */
+footer{border-top:1px solid var(--border);padding:28px 20px 90px;max-width:1200px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;}
+@media(min-width:600px){footer{flex-direction:row;justify-content:space-between;padding:28px 32px 90px;text-align:left;}}
+.footer-brand{font-family:'Fraunces',serif;font-size:16px;font-weight:700;}
+.footer-brand span{color:var(--red-light);}
+.footer-info{font-size:11px;color:var(--text-muted);letter-spacing:.05em;text-align:center;}
+@media(min-width:600px){.footer-info{text-align:right;}}
 
-  /* ── ASSINATURA ── */
-  #assinatura { max-width: 1200px; margin: 0 auto; padding: 120px 24px 160px; }
-  .assinatura-inner { text-align: center; position: relative; }
-  .assinatura-ring { width: 200px; height: 200px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto 60px; position: relative; }
-  .assinatura-ring::before { content: ''; position: absolute; inset: 12px; border-radius: 50%; border: 1px solid rgba(201,146,42,0.08); }
-  .assinatura-ring-inner { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--teal), var(--red)); display: flex; align-items: center; justify-content: center; font-size: 28px; }
-  .assinatura-title { font-family: 'Fraunces', serif; font-size: clamp(36px, 5vw, 64px); font-weight: 900; line-height: 1.1; margin-bottom: 24px; letter-spacing: -0.02em; }
-  .assinatura-sub { font-size: 16px; color: var(--text-muted); max-width: 480px; margin: 0 auto 48px; line-height: 1.7; font-weight: 300; }
-  .assinatura-validade { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-top: 40px; }
-  .assinatura-validade strong { color: var(--gold); }
-  .assinatura-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-top: 80px; text-align: left; }
-  .party-block { background: var(--bg2); padding: 40px 40px 48px; }
-  .party-label { font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 40px; }
-  .party-line { width: 100%; height: 1px; background: rgba(232,226,217,0.15); margin-bottom: 16px; }
-  .party-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; margin-bottom: 4px; }
-  .party-role { font-size: 12px; color: var(--text-muted); letter-spacing: 0.05em; }
-
-  /* FOOTER */
-  footer { border-top: 1px solid var(--border); padding: 32px 24px; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; }
-  .footer-brand { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; }
-  .footer-brand span { color: var(--red-light); }
-  .footer-info { font-size: 11px; color: var(--text-muted); letter-spacing: 0.08em; text-align: right; }
-
-  .grid-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
-
-  /* ── CTAs ao longo da LP ── */
-
-  /* Nav CTA */
-  .nav-cta {
-    background: var(--gold);
-    color: var(--bg);
-    font-family: 'DM Sans', sans-serif;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: none;
-    transition: background 0.3s, transform 0.2s;
-    white-space: nowrap;
-  }
-  .nav-cta:hover { background: var(--gold-light); transform: translateY(-1px); }
-
-  /* Section CTA — simples, centrado */
-  .section-cta-label {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-bottom: 20px;
-    letter-spacing: 0.03em;
-  }
-
-  /* Mid-page CTA — faixa de conversão */
-  .mid-cta {
-    background: var(--bg2);
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-  }
-  .mid-cta-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 56px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 40px;
-  }
-  .mid-cta-eyebrow {
-    font-size: 10px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    color: var(--gold);
-    display: block;
-    margin-bottom: 12px;
-  }
-  .mid-cta-title {
-    font-family: 'Fraunces', serif;
-    font-size: clamp(22px, 3vw, 36px);
-    font-weight: 700;
-    line-height: 1.2;
-    letter-spacing: -0.02em;
-  }
-  .mid-cta-actions {
-    display: flex;
-    gap: 16px;
-    flex-shrink: 0;
-    flex-wrap: wrap;
-  }
-
-  /* Sticky bottom bar — mobile only */
-  .sticky-bar {
-    display: none;
-    position: fixed;
-    bottom: 0; left: 0; right: 0;
-    z-index: 200;
-    background: rgba(7,11,14,0.97);
-    border-top: 1px solid rgba(201,146,42,0.3);
-    padding: 12px 16px;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    gap: 10px;
-    transform: translateY(100%);
-    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  .sticky-bar.visible { transform: translateY(0); }
-  .sticky-bar-primary {
-    flex: 1;
-    background: var(--gold);
-    color: var(--bg);
-    border: none;
-    padding: 14px 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    border-radius: 4px;
-    text-align: center;
-    cursor: pointer;
-  }
-  .sticky-bar-secondary {
-    background: transparent;
-    color: var(--text-muted);
-    border: 1px solid rgba(232,226,217,0.15);
-    padding: 14px 16px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 12px;
-    font-weight: 400;
-    text-decoration: none;
-    border-radius: 4px;
-    text-align: center;
-    white-space: nowrap;
-    cursor: pointer;
-  }
-
-  @media (max-width: 900px) {
-    .sticky-bar { display: flex; }
-    .mid-cta-inner { flex-direction: column; align-items: flex-start; gap: 32px; }
-    .mid-cta-actions { width: 100%; }
-    .mid-cta-actions .btn-primary,
-    .mid-cta-actions .btn-ghost { flex: 1; text-align: center; justify-content: center; }
-    /* Espaço para sticky bar não cobrir conteúdo */
-    footer { padding-bottom: 80px; }
-  }
-
-  @media (max-width: 600px) {
-    .nav-cta { display: none; }
-    .section-cta { padding-top: 40px !important; }
-  }
-
-  /* ── RESPONSIVE ── */
-
-  /* Tablet grande */
-  @media (max-width: 1024px) {
-    .pilares-grid { grid-template-columns: repeat(2, 1fr); }
-    .potencial-mosaic { grid-template-columns: 1fr 1fr; }
-    .pot-block.wide { grid-column: span 2; }
-  }
-
-  /* Tablet / mobile grande */
-  @media (max-width: 900px) {
-    /* Nav */
-    nav { padding: 16px 20px; }
-    .nav-links { display: none; }
-
-    /* Grids inline → coluna */
-    .grid-2col { grid-template-columns: 1fr !important; gap: 0 !important; }
-
-    /* Grids de seção */
-    .levels-intro, .etapas-header, .conteudo-header { grid-template-columns: 1fr; gap: 40px; }
-    .levels-grid, .pricing-grid, .funil { grid-template-columns: 1fr; }
-    .diferenciais-grid { grid-template-columns: 1fr 1fr; }
-    .assinatura-parties { grid-template-columns: 1fr; }
-    .timeline-prazo { display: none; }
-
-    /* Potencial — blocos inline-grid */
-    .potencial-mosaic { grid-template-columns: 1fr 1fr; }
-    .pot-block.wide { grid-column: span 2; }
-    .pot-block.tall { grid-row: auto; }
-
-    /* Seção pot-story: grid inline vira coluna */
-    #potencial .pot-story > div[style*="grid-template-columns: 1fr 1fr"] {
-      grid-template-columns: 1fr !important;
-      gap: 40px !important;
-    }
-
-    /* Comparação de custo: lado a lado vira empilhado */
-    #comparacao > div[style*="grid-template-columns: 1fr 1fr"] {
-      grid-template-columns: 1fr !important;
-    }
-
-    /* Antes/depois potencial */
-    #potencial > div[style*="grid-template-columns: 1fr 1fr"] {
-      grid-template-columns: 1fr !important;
-    }
-    #potencial > div > div[style*="border-left: 1px solid"] {
-      border-left: none !important;
-      border-top: 1px solid var(--border);
-    }
-
-    /* Footer */
-    footer { flex-direction: column; gap: 12px; text-align: center; }
-    .footer-info { text-align: center; }
-  }
-
-  /* Mobile */
-  @media (max-width: 600px) {
-    /* Cursor desativado no touch */
-    .cursor, .cursor-ring { display: none; }
-    body { cursor: auto; }
-    a, button { cursor: pointer; }
-
-    /* Grids */
-    .diferenciais-grid, .pilares-grid { grid-template-columns: 1fr; }
-    .potencial-mosaic { grid-template-columns: 1fr; }
-    .pot-block.wide { grid-column: span 1; }
-
-    /* Sections padding */
-    #potencial, #conteudo, #pilares, #metodologia,
-    #entregaveis, #diferenciais, #etapas,
-    #comparacao, #investimento, #assinatura { padding: 64px 16px; }
-
-    /* Hero ajustes */
-    .hero-cta { flex-direction: column; align-items: center; }
-    .btn-primary, .btn-ghost { width: 100%; text-align: center; justify-content: center; }
-
-    /* Tabs scroll horizontal no mobile */
-    .tabs { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
-    .tab { white-space: nowrap; }
-
-    /* Comparação: preços menores */
-    #comparacao .cmp-row { flex-direction: column; gap: 4px; align-items: flex-start !important; }
-
-    /* Pot-story padding */
-    #potencial .pot-story { padding: 32px 20px !important; }
-
-    /* Comparação padding */
-    #comparacao > div[style*="grid"] > div { padding: 32px 20px !important; }
-
-    /* Assinatura ring menor */
-    .assinatura-ring { width: 140px; height: 140px; }
-    .assinatura-ring-inner { width: 60px; height: 60px; font-size: 22px; }
-
-    /* Assinatura botões empilhados */
-    .assinatura-inner > div[style*="display: flex"] { flex-direction: column !important; align-items: center !important; }
-
-    /* Party block padding */
-    .party-block { padding: 28px 24px 32px; }
-
-    /* Timeline */
-    .timeline-item { padding-left: 40px; }
-  }
-
-  /* Mobile pequeno */
-  @media (max-width: 380px) {
-    .nav-badge { display: none; }
-    #potencial, #conteudo, #pilares, #metodologia,
-    #entregaveis, #diferenciais, #etapas,
-    #comparacao, #investimento, #assinatura { padding: 48px 12px; }
-  }
+/* ── STICKY BAR ── */
+.sticky-bar{position:fixed;bottom:0;left:0;right:0;z-index:200;background:rgba(7,11,14,.97);border-top:1px solid rgba(201,146,42,.3);padding:12px 16px;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;gap:8px;transform:translateY(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);}
+.sticky-bar.visible{transform:translateY(0);}
+.sticky-bar-primary{flex:1;background:var(--gold);color:var(--bg);border:none;padding:13px 12px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border-radius:var(--r);text-align:center;}
+.sticky-bar-secondary{background:transparent;color:var(--text-muted);border:1px solid rgba(232,226,217,.15);padding:13px 14px;font-family:'DM Sans',sans-serif;font-size:12px;text-decoration:none;border-radius:var(--r);text-align:center;white-space:nowrap;}
+@media(min-width:900px){.sticky-bar{display:none;}}
 </style>
 </head>
 <body>
 
+<!-- Cursor (desktop) -->
 <div class="cursor" id="cursor"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 
+<!-- Sticky bar mobile -->
+<div class="sticky-bar" id="stickyBar">
+  <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="sticky-bar-primary">🚀 Iniciar projeto</a>
+  <a href="https://wa.me/5592000000000" target="_blank" class="sticky-bar-secondary">💬 WhatsApp</a>
+</div>
+
+<!-- NAV -->
 <nav>
   <div class="nav-logo">paleta <span>food</span></div>
   <ul class="nav-links">
@@ -559,7 +412,7 @@
     <span class="accent-teal">Mais</span> <span class="accent-gold">pizza.</span><br>
     <span class="accent-red">Mais resultado.</span>
   </h1>
-  <p class="hero-sub">Uma assessoria de marketing estratégica construída para transformar o Loppifest no nome mais pedido nos eventos de Manaus.</p>
+  <p class="hero-sub">Uma assessoria de marketing estratégica para transformar o Loppifest no nome mais pedido nos eventos de Manaus.</p>
   <div class="hero-cta">
     <a href="#potencial" class="btn-primary">Ver o potencial</a>
     <a href="#pilares" class="btn-ghost">A estratégia</a>
@@ -570,91 +423,83 @@
 <div class="divider"></div>
 
 <!-- POTENCIAL -->
-<div id="potencial">
-  <div class="potencial-header">
+<div id="potencial" class="sec">
+  <div class="potencial-header" style="margin-bottom:56px;">
     <div class="section-label reveal">O potencial real</div>
     <h2 class="section-title reveal reveal-delay-1">O Loppifest já tem<br>o que ninguém consegue comprar.</h2>
-    <p class="section-desc reveal reveal-delay-2">Confiança de 33 anos. Uma cidade em crescimento. Clientes que já amam a marca. O que falta não é produto — é estratégia para ser encontrado, lembrado e contratado.</p>
+    <p class="section-desc reveal reveal-delay-2" style="max-width:680px;">Confiança de 33 anos. Uma cidade em crescimento. Clientes que já amam a marca. O que falta não é produto — é estratégia para ser encontrado, lembrado e contratado.</p>
   </div>
 
-  <!-- Bloco narrativo principal: a jornada do cliente -->
-  <div class="pot-story reveal" style="background: var(--bg2); padding: 56px 48px; margin-bottom: 2px; position: relative; overflow: hidden;">
-    <div style="position:absolute; top:0; left:0; width:3px; height:100%; background: linear-gradient(to bottom, var(--teal-light), var(--gold), var(--red-light));"></div>
-    <div class="grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;">
+  <div class="pot-story reveal">
+    <div class="pot-story-accent"></div>
+    <div class="pot-story-grid">
       <div>
-        <div class="section-label" style="margin-bottom: 24px;">A história que já existe</div>
-        <h3 style="font-family: 'Fraunces', serif; font-size: clamp(24px, 3vw, 36px); font-weight: 700; line-height: 1.2; margin-bottom: 24px;">Era moleque quando foi pela primeira vez com o pai. Hoje é ele quem quer contratar o evento do filho.</h3>
-        <p style="font-size: 15px; color: var(--text-muted); line-height: 1.8; font-weight: 300; margin-bottom: 16px;">Em Manaus, a Loppiano Pizza construiu algo raro: laços geracionais. O cliente fiel de hoje foi criança no restaurante — e carrega essa memória afetiva para o momento em que precisa escolher quem vai servir a pizza no aniversário do filho.</p>
-        <p style="font-size: 15px; color: var(--text-muted); line-height: 1.8; font-weight: 300;">O Loppifest não começa do zero. Começa com <strong style="color: var(--text);">credibilidade herdada</strong>. A missão da Paleta Food é ativar esse ativo adormecido e transformá-lo em contratos fechados todo mês.</p>
+        <div class="section-label" style="margin-bottom:20px;">A história que já existe</div>
+        <h3 class="pot-story">Era moleque quando foi pela primeira vez com o pai. Hoje é ele quem quer contratar o evento do filho.</h3>
+        <p>Em Manaus, a Loppiano Pizza construiu algo raro: laços geracionais. O cliente fiel de hoje foi criança no restaurante — e carrega essa memória afetiva para o momento em que precisa escolher quem vai servir a pizza no aniversário do filho.</p>
+        <p>O Loppifest não começa do zero. Começa com <strong style="color:var(--text);">credibilidade herdada</strong>. A missão da Paleta Food é ativar esse ativo adormecido e transformá-lo em contratos fechados todo mês.</p>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 2px; background: var(--border);">
-        <div style="background: var(--bg3); padding: 28px 32px; border-left: 3px solid var(--teal-light);">
-          <div style="font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--teal-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">O cliente mais fácil de fechar</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300;">Quem já conhece a Loppiano tem menos objeção. Não precisa ser convencido de que a pizza é boa — ele já sabe. O esforço de venda é menor. A conversão é maior.</div>
+      <div class="pot-cards">
+        <div class="pot-card pot-card-teal">
+          <div class="pot-card-label">O cliente mais fácil de fechar</div>
+          <p>Quem já conhece a Loppiano tem menos objeção. Não precisa ser convencido de que a pizza é boa. O esforço de venda é menor. A conversão é maior.</p>
         </div>
-        <div style="background: var(--bg3); padding: 28px 32px; border-left: 3px solid var(--gold);">
-          <div style="font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--gold); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">100% boca a boca hoje</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300;">Todo cliente atual chegou por indicação — sem nenhuma estratégia ativa. Isso prova que o produto funciona. Significa que com marketing estruturado, o crescimento é inevitável.</div>
+        <div class="pot-card pot-card-gold">
+          <div class="pot-card-label">100% boca a boca hoje</div>
+          <p>Todo cliente chegou por indicação — sem nenhuma estratégia ativa. Isso prova que o produto funciona. Com marketing estruturado, o crescimento é inevitável.</p>
         </div>
-        <div style="background: var(--bg3); padding: 28px 32px; border-left: 3px solid var(--red-light);">
-          <div style="font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--red-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;">Potencial declarado pelo próprio negócio</div>
-          <div style="font-size: 14px; color: var(--text-muted); line-height: 1.7; font-weight: 300;">R$ 50k–70k/mês é o potencial identificado para o Loppifest. A operação está montada. Falta captar de forma ativa — e é exatamente aí que a Paleta Food entra.</div>
+        <div class="pot-card pot-card-red">
+          <div class="pot-card-label">Potencial declarado pelo negócio</div>
+          <p>R$ 50k–70k/mês é o potencial identificado para o Loppifest. A operação está montada. Falta captar de forma ativa.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Mosaico de dados de contexto -->
   <div class="potencial-mosaic reveal reveal-delay-1">
     <div class="pot-block pot-accent-teal">
       <div class="pot-num">33</div>
       <div class="pot-unit">anos de Loppiano em Manaus</div>
-      <p class="pot-label">Três décadas de presença na cidade criaram <strong>gerações de clientes fiéis</strong>. O Loppifest herda essa confiança — e pode ativá-la para o mercado de eventos.</p>
+      <p class="pot-label">Três décadas de presença criaram <strong>gerações de clientes fiéis</strong>. O Loppifest herda essa confiança.</p>
     </div>
     <div class="pot-block pot-accent-gold">
       <div class="pot-num">+40%</div>
       <div class="pot-unit">crescimento recente da Loppiano</div>
-      <p class="pot-label">Quanto mais a Loppiano cresce, mais o Loppifest tem espaço para crescer junto. A marca que serve de <strong>"canhão" de divulgação</strong> está cada vez mais carregada.</p>
+      <p class="pot-label">Quanto mais a Loppiano cresce, mais o Loppifest tem espaço para crescer junto. O <strong>"canhão" de divulgação</strong> está cada vez mais carregado.</p>
     </div>
     <div class="pot-block pot-accent-red">
       <div class="pot-num">132k</div>
       <div class="pot-unit">empregos diretos na Zona Franca</div>
-      <p class="pot-label">A ZFM sustenta <strong>500k+ pessoas com renda formal</strong> em Manaus — empresas como Bradesco e Millen já contrataram o Loppifest. O mercado corporativo é um canal real.</p>
+      <p class="pot-label">A ZFM sustenta <strong>500k+ pessoas com renda formal</strong> em Manaus. Empresas como Bradesco e Millen já contrataram o Loppifest.</p>
     </div>
-    <div class="pot-block pot-accent-gold" style="grid-column: span 3;">
-      <div class="pot-num" style="font-size: clamp(28px,3.5vw,52px); color: var(--gold);">Cerimonialistas</div>
+    <div class="pot-block pot-accent-gold span2">
+      <div class="pot-num" style="font-size:clamp(24px,4vw,48px);">Cerimonialistas</div>
       <div class="pot-unit">o canal multiplicador que o Loppifest já começou a mapear</div>
-      <p class="pot-label" style="max-width: 800px;">Um cerimonialista fecha dezenas de eventos por ano e indica fornecedores de confiança para cada um. <strong>Um cerimonialista fidelizado vale mais do que 20 clientes avulsos.</strong> A inauguração do Lebar já coloca o Loppifest diante de 20 cerimonialistas de Manaus. Esse canal precisa de estratégia — e a Paleta Food sabe exatamente como trabalhar ele.</p>
+      <p class="pot-label" style="max-width:700px;">Um cerimonialista fecha dezenas de eventos por ano. <strong>Um cerimonialista fidelizado vale mais do que 20 clientes avulsos.</strong> A inauguração do Lebar já coloca o Loppifest diante de 20 cerimonialistas de Manaus.</p>
     </div>
   </div>
 
-  <!-- Linha do tempo: de onde vem para onde vai -->
-  <div class="reveal reveal-delay-2 grid-2col" style="background: var(--bg2); margin-top: 2px; display: grid; grid-template-columns: 1fr 1fr; gap: 0; background: var(--border);">
-    <div style="background: var(--bg2); padding: 48px 40px;">
-      <div style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 24px;">Hoje — sem estratégia ativa</div>
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text-muted);"><span style="color:var(--red-light); flex-shrink:0; margin-top:2px;">✕</span>Captação 100% reativa — cliente liga para a Loppiano</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text-muted);"><span style="color:var(--red-light); flex-shrink:0; margin-top:2px;">✕</span>Sem presença digital própria do Loppifest</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text-muted);"><span style="color:var(--red-light); flex-shrink:0; margin-top:2px;">✕</span>Cerimonialistas sem relacionamento estruturado</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text-muted);"><span style="color:var(--red-light); flex-shrink:0; margin-top:2px;">✕</span>Corporativo sem prospecção ativa</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text-muted);"><span style="color:var(--red-light); flex-shrink:0; margin-top:2px;">✕</span>Potencial de R$50k–70k/mês não ativado</div>
-      </div>
+  <div class="antes-depois reveal reveal-delay-2">
+    <div class="ad-col ad-col-before">
+      <div class="ad-label">Hoje — sem estratégia ativa</div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--red-light);">✕</span><span style="color:var(--text-muted);">Captação 100% reativa — cliente liga para a Loppiano</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--red-light);">✕</span><span style="color:var(--text-muted);">Sem presença digital própria do Loppifest</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--red-light);">✕</span><span style="color:var(--text-muted);">Cerimonialistas sem relacionamento estruturado</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--red-light);">✕</span><span style="color:var(--text-muted);">Corporativo sem prospecção ativa</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--red-light);">✕</span><span style="color:var(--text-muted);">Potencial de R$50k–70k/mês não ativado</span></div>
     </div>
-    <div style="background: var(--bg3); padding: 48px 40px; border-left: 1px solid var(--border);">
-      <div style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 24px;">Com a Paleta Food — captação ativa</div>
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text);"><span style="color:var(--gold); flex-shrink:0; margin-top:2px;">→</span>Estratégia digital que gera demanda antes do cliente ligar</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text);"><span style="color:var(--gold); flex-shrink:0; margin-top:2px;">→</span>Identidade digital do Loppifest posicionada e ativa</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text);"><span style="color:var(--gold); flex-shrink:0; margin-top:2px;">→</span>Canal de cerimonialistas mapeado, nutrído e convertendo</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text);"><span style="color:var(--gold); flex-shrink:0; margin-top:2px;">→</span>Prospecção B2B estruturada para o mercado corporativo</div>
-        <div style="display:flex; gap:12px; align-items:flex-start; font-size:14px; color: var(--text);"><span style="color:var(--gold); flex-shrink:0; margin-top:2px;">→</span>Crescimento previsível, metrificado e escalável</div>
-      </div>
+    <div class="ad-col ad-col-after">
+      <div class="ad-label">Com a Paleta Food — captação ativa</div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--gold);">→</span><span>Estratégia digital que gera demanda antes do cliente ligar</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--gold);">→</span><span>Identidade digital do Loppifest posicionada e ativa</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--gold);">→</span><span>Canal de cerimonialistas mapeado, nutrido e convertendo</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--gold);">→</span><span>Prospecção B2B estruturada para o mercado corporativo</span></div>
+      <div class="ad-row"><span class="ad-row-icon" style="color:var(--gold);">→</span><span>Crescimento previsível, metrificado e escalável</span></div>
     </div>
   </div>
 
-  <!-- CTA pós-potencial -->
-  <div class="section-cta reveal" style="text-align: center; padding-top: 56px;">
-    <p class="section-cta-label">O potencial está mapeado. O próximo passo é ativar.</p>
+  <div class="sec-cta reveal reveal-delay-3">
+    <p class="sec-cta-label">O potencial está mapeado. O próximo passo é ativar.</p>
     <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">Quero iniciar meu projeto →</a>
   </div>
 </div>
@@ -662,21 +507,20 @@
 <div class="divider"></div>
 
 <!-- CONTEÚDO -->
-<div id="conteudo">
-  <div class="conteudo-header">
+<div id="conteudo" class="sec">
+  <div class="levels-intro">
     <div>
       <div class="section-label reveal">Produção de conteúdo</div>
       <h2 class="section-title reveal reveal-delay-1">Cada post tem<br>um papel estratégico.</h2>
     </div>
-    <p class="section-desc reveal reveal-delay-2">Não produzimos conteúdo para preencher calendário. Cada peça é planejada para cumprir uma função específica no funil — atrair quem não conhece, convencer quem está em dúvida, reter quem já contratou.</p>
+    <p class="section-desc reveal reveal-delay-2">Não produzimos conteúdo para preencher calendário. Cada peça é planejada para cumprir uma função específica no funil — atrair, convencer, converter.</p>
   </div>
-
   <div class="funil">
     <div class="funil-stage fs-1 reveal">
       <span class="funil-icon">📡</span>
       <div class="funil-stage-label">Topo do funil</div>
       <div class="funil-name">Presença</div>
-      <p class="funil-desc">Fazer o Loppifest existir no digital. Conteúdo que alcança quem ainda não te conhece — quem está planejando um evento mas ainda não sabe que você existe. O objetivo é ser encontrado.</p>
+      <p class="funil-desc">Fazer o Loppifest existir no digital. Conteúdo que alcança quem ainda não te conhece. O objetivo é ser encontrado.</p>
       <div class="funil-formats">
         <span class="funil-tag">Reels de bastidores</span>
         <span class="funil-tag">Conteúdo de valor</span>
@@ -688,7 +532,7 @@
       <span class="funil-icon">🎯</span>
       <div class="funil-stage-label">Meio do funil</div>
       <div class="funil-name">Autoridade</div>
-      <p class="funil-desc">Transformar visitante em lead qualificado. Conteúdo que mostra competência, processo e resultado — para que o prospect confie antes de entrar em contato. O objetivo é ser escolhido.</p>
+      <p class="funil-desc">Transformar visitante em lead qualificado. Conteúdo que mostra competência e resultado. O objetivo é ser escolhido.</p>
       <div class="funil-formats">
         <span class="funil-tag">Cases de eventos</span>
         <span class="funil-tag">Depoimentos</span>
@@ -700,7 +544,7 @@
       <span class="funil-icon">🔁</span>
       <div class="funil-stage-label">Fundo do funil</div>
       <div class="funil-name">Conversão</div>
-      <p class="funil-desc">Transformar interesse em orçamento e orçamento em contrato. Conteúdo que empurra para a ação — com urgência, oferta clara e caminho simples para fechar. O objetivo é vender.</p>
+      <p class="funil-desc">Transformar interesse em orçamento e orçamento em contrato. O objetivo é vender.</p>
       <div class="funil-formats">
         <span class="funil-tag">CTAs diretos</span>
         <span class="funil-tag">Ofertas sazonais</span>
@@ -713,56 +557,55 @@
 
 <div class="divider"></div>
 
-<!-- PILARES ESTRATÉGICOS -->
-<div id="pilares">
-  <div class="pilares-header">
+<!-- PILARES -->
+<div id="pilares" class="sec">
+  <div class="pilares-header" style="margin-bottom:48px;">
     <div class="section-label reveal">Direcionamento estratégico</div>
     <h2 class="section-title reveal reveal-delay-1">Quatro pilares.<br>Um crescimento estruturado.</h2>
-    <p class="section-desc reveal reveal-delay-2">A Paleta Food não gerencia posts — gerencia crescimento. Cada pilar representa uma frente de trabalho que, juntas, constroem o Loppifest como referência no mercado de eventos de Manaus.</p>
+    <p class="section-desc reveal reveal-delay-2">A Paleta Food não gerencia posts — gerencia crescimento. Cada pilar representa uma frente que, juntas, constroem o Loppifest como referência em eventos de Manaus.</p>
   </div>
-
   <div class="pilares-grid">
     <div class="pilar-card reveal">
       <div class="pilar-arrow">→</div>
       <div class="pilar-num">01</div>
       <span class="pilar-icon">🔍</span>
       <div class="pilar-title">Diagnóstico contínuo</div>
-      <p class="pilar-desc">Monitoramento ativo do mercado, da concorrência e da performance do Loppifest. Identificamos oportunidades antes que elas desapareçam e gargalos antes que virem problema.</p>
+      <p class="pilar-desc">Monitoramento ativo do mercado, da concorrência e da performance do Loppifest. Identificamos oportunidades antes que desapareçam.</p>
     </div>
     <div class="pilar-card reveal reveal-delay-1">
       <div class="pilar-arrow">→</div>
       <div class="pilar-num">02</div>
       <span class="pilar-icon">🧭</span>
       <div class="pilar-title">Estratégia de crescimento</div>
-      <p class="pilar-desc">Planejamento baseado em dados, não em intuição. Definimos metas, segmentos de eventos prioritários e o caminho mais curto para aumentar o volume de contratos.</p>
+      <p class="pilar-desc">Planejamento baseado em dados. Definimos metas, segmentos prioritários e o caminho mais curto para aumentar contratos.</p>
     </div>
     <div class="pilar-card reveal reveal-delay-2">
       <div class="pilar-arrow">→</div>
       <div class="pilar-num">03</div>
       <span class="pilar-icon">⚡</span>
       <div class="pilar-title">Execução com foco em venda</div>
-      <p class="pilar-desc">Tudo que produzimos tem um objetivo comercial. Conteúdo, tráfego, CRM, scripts — cada entrega é projetada para gerar demanda e fechar mais eventos.</p>
+      <p class="pilar-desc">Tudo que produzimos tem um objetivo comercial. Conteúdo, tráfego, CRM — cada entrega é projetada para fechar mais eventos.</p>
     </div>
     <div class="pilar-card reveal reveal-delay-3">
       <div class="pilar-arrow">→</div>
       <div class="pilar-num">04</div>
       <span class="pilar-icon">📈</span>
       <div class="pilar-title">Escala previsível</div>
-      <p class="pilar-desc">O objetivo final não é crescer uma vez — é crescer todo mês. Construímos processos, automações e sistemas que transformam o Loppifest numa máquina de eventos.</p>
+      <p class="pilar-desc">O objetivo não é crescer uma vez — é crescer todo mês. Construímos sistemas que transformam o Loppifest numa máquina de eventos.</p>
     </div>
   </div>
 </div>
 
-<!-- CTA meio de página -->
+<!-- MID-PAGE CTA -->
 <div class="mid-cta reveal">
   <div class="mid-cta-inner">
-    <div class="mid-cta-text">
+    <div>
       <span class="mid-cta-eyebrow">Já viu o suficiente?</span>
       <p class="mid-cta-title">A estratégia está clara.<br>A decisão também pode ser.</p>
     </div>
     <div class="mid-cta-actions">
       <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">Iniciar meu projeto</a>
-      <a href="#investimento" class="btn-ghost">Ver investimento primeiro</a>
+      <a href="#investimento" class="btn-ghost">Ver investimento</a>
     </div>
   </div>
 </div>
@@ -770,13 +613,13 @@
 <div class="divider"></div>
 
 <!-- METODOLOGIA -->
-<div id="metodologia">
+<div id="metodologia" class="sec">
   <div class="levels-intro">
     <div>
       <div class="section-label reveal">Metodologia</div>
       <h2 class="section-title reveal reveal-delay-1">Três níveis.<br>Um objetivo.</h2>
     </div>
-    <p class="section-desc reveal reveal-delay-2">Os serviços são entregues de forma progressiva. Cada nível acumula o anterior e amplia o resultado. Você escolhe onde quer chegar — nós construímos o caminho.</p>
+    <p class="section-desc reveal reveal-delay-2">Os serviços são entregues de forma progressiva. Cada nível acumula o anterior e amplia o resultado. Você escolhe onde quer chegar.</p>
   </div>
   <div class="levels-grid">
     <div class="level-card l1 reveal">
@@ -789,22 +632,22 @@
       <div class="level-number">2</div>
       <div class="level-tag">Nível 2</div>
       <div class="level-name">Conversão</div>
-      <p class="level-desc">Atuar lado a lado com seu comercial, identificar gargalos, otimizar processos de fechamento e potencializar as vendas trazendo escala e previsibilidade para a operação.</p>
+      <p class="level-desc">Atuar lado a lado com seu comercial, identificar gargalos, otimizar processos de fechamento e potencializar as vendas trazendo escala e previsibilidade.</p>
     </div>
     <div class="level-card l3 reveal reveal-delay-3">
       <div class="level-number">3</div>
       <div class="level-tag">Nível 3</div>
       <div class="level-name">Retenção</div>
-      <p class="level-desc">Gerar novas oportunidades para quem ainda não fechou e novas vendas para quem já contratou. Automação, fidelização e recuperação de oportunidades perdidas.</p>
+      <p class="level-desc">Gerar novas oportunidades para quem ainda não fechou e novas vendas para quem já contratou. Automação, fidelização e recuperação de oportunidades.</p>
     </div>
   </div>
 </div>
 
 <div class="divider"></div>
 
-<!-- ENTREGAVEIS -->
-<div id="entregaveis">
-  <div style="margin-bottom:60px;">
+<!-- ENTREGÁVEIS -->
+<div id="entregaveis" class="sec">
+  <div style="margin-bottom:40px;">
     <div class="section-label reveal">Entregáveis</div>
     <h2 class="section-title reveal reveal-delay-1">O que está incluído<br>em cada nível.</h2>
   </div>
@@ -818,11 +661,11 @@
       <div class="deliverable-item"><div class="del-icon l1-icon">📊</div><div class="del-text">Análise de Mercado e Posicionamento Digital</div></div>
       <div class="deliverable-item"><div class="del-icon l1-icon">📡</div><div class="del-text">Implementação de Atendimento Omnichannel</div></div>
       <div class="deliverable-item"><div class="del-icon l1-icon">🧭</div><div class="del-text">Consultoria e Elaboração de Estratégia Comercial</div></div>
-      <div class="deliverable-item"><div class="del-icon l1-icon">🔁</div><div class="del-text">Planejamento de Implementação de Funis de Marketing</div></div>
-      <div class="deliverable-item"><div class="del-icon l1-icon">⚡</div><div class="del-text">Gestão e Execução de Tráfego Pago Estratégico (Meta ADS)</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🔁</div><div class="del-text">Planejamento de Funis de Marketing</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">⚡</div><div class="del-text">Gestão e Execução de Tráfego Pago (Meta ADS)</div></div>
       <div class="deliverable-item"><div class="del-icon l1-icon">🎬</div><div class="del-text">01 Produção mensal de Conteúdo</div></div>
-      <div class="deliverable-item"><div class="del-icon l1-icon">📱</div><div class="del-text">Gerenciamento das Redes Sociais + Stories — até 10 conteúdos mensais · 90 stories/mês</div></div>
-      <div class="deliverable-item"><div class="del-icon l1-icon">🍕</div><div class="del-text">Análise e Acompanhamento de Plataformas de Pedido</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">📱</div><div class="del-text">15 postagens mensais + 90 stories/mês</div></div>
+      <div class="deliverable-item"><div class="del-icon l1-icon">🍕</div><div class="del-text">Análise e Acompanhamento de Plataformas</div></div>
     </div>
   </div>
   <div id="tab2" class="tab-content">
@@ -831,9 +674,9 @@
       <div class="deliverable-item"><div class="del-icon l2-icon">🔍</div><div class="del-text">Análise e Acompanhamento dos Canais de Venda</div></div>
       <div class="deliverable-item"><div class="del-icon l2-icon">🛠️</div><div class="del-text">Consultoria e Implementação do CRM de Vendas</div></div>
       <div class="deliverable-item"><div class="del-icon l2-icon">📋</div><div class="del-text">Elaboração do Playbook e Scripts de Vendas</div></div>
-      <div class="deliverable-item"><div class="del-icon l2-icon">👥</div><div class="del-text">Consultoria e Treinamento de Time Comercial</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">👥</div><div class="del-text">Treinamento de Time Comercial</div></div>
       <div class="deliverable-item"><div class="del-icon l2-icon">📊</div><div class="del-text">Gestão e Acompanhamento de Indicadores</div></div>
-      <div class="deliverable-item"><div class="del-icon l2-icon">📱</div><div class="del-text">Gerenciamento das Redes Sociais — até 15 conteúdos mensais · 150 stories/mês</div></div>
+      <div class="deliverable-item"><div class="del-icon l2-icon">📱</div><div class="del-text">20 postagens mensais + 150 stories/mês</div></div>
     </div>
   </div>
   <div id="tab3" class="tab-content">
@@ -841,8 +684,8 @@
       <div class="deliverable-item"><div class="del-icon l3-icon">🏆</div><div class="del-text">Tudo do Nível 2 incluso</div></div>
       <div class="deliverable-item"><div class="del-icon l3-icon">🤖</div><div class="del-text">Automação de Contatos de Relacionamento</div></div>
       <div class="deliverable-item"><div class="del-icon l3-icon">💬</div><div class="del-text">Implementação de E-mail e WhatsApp Marketing</div></div>
-      <div class="deliverable-item"><div class="del-icon l3-icon">🎯</div><div class="del-text">Implementação de Estratégias de Fidelização</div></div>
-      <div class="deliverable-item"><div class="del-icon l3-icon">🔄</div><div class="del-text">Implementação de Estratégias de Recuperação de Clientes</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">🎯</div><div class="del-text">Estratégias de Fidelização</div></div>
+      <div class="deliverable-item"><div class="del-icon l3-icon">🔄</div><div class="del-text">Estratégias de Recuperação de Clientes</div></div>
       <div class="deliverable-item"><div class="del-icon l3-icon">📉</div><div class="del-text">Análise, Gestão e Otimização de Performance</div></div>
     </div>
   </div>
@@ -851,33 +694,33 @@
 <div class="divider"></div>
 
 <!-- DIFERENCIAIS -->
-<div id="diferenciais">
+<div id="diferenciais" class="sec">
   <div class="section-label reveal">Por que Paleta Food</div>
   <h2 class="section-title reveal reveal-delay-1">Assessoria de valor.<br>Não de posts.</h2>
-  <p class="section-desc reveal reveal-delay-2">Diferente das agências tradicionais, entregamos além dos resultados operacionais — apoio tático e estratégico ao seu negócio.</p>
+  <p class="section-desc reveal reveal-delay-2">Diferente das agências tradicionais, entregamos apoio tático e estratégico ao seu negócio — não só resultados operacionais.</p>
   <div class="diferenciais-grid">
     <div class="diferencial-card reveal"><span class="dif-num">01</span><span class="dif-icon">⚡</span><div class="dif-title">Start em 7 dias</div><p class="dif-desc">Campanhas rodando em até uma semana após a assinatura.</p></div>
-    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">02</span><span class="dif-icon">📊</span><div class="dif-title">Checkpoint mensal</div><p class="dif-desc">Resultados do mês, alinhamento de metas e evolução do projeto a cada ciclo.</p></div>
-    <div class="diferencial-card reveal reveal-delay-2"><span class="dif-num">03</span><span class="dif-icon">📄</span><div class="dif-title">Relatórios com plano de ação</div><p class="dif-desc">Não entregamos só números — entregamos o próximo passo.</p></div>
-    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">04</span><span class="dif-icon">🎯</span><div class="dif-title">Consultoria estratégica</div><p class="dif-desc">Para auxiliar nos desafios, demandas de leads e estratégias que vamos implementar juntos.</p></div>
+    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">02</span><span class="dif-icon">📊</span><div class="dif-title">Checkpoint mensal</div><p class="dif-desc">Resultados do mês, alinhamento de metas e evolução a cada ciclo.</p></div>
+    <div class="diferencial-card reveal reveal-delay-2"><span class="dif-num">03</span><span class="dif-icon">📄</span><div class="dif-title">Relatórios + plano de ação</div><p class="dif-desc">Não entregamos só números — entregamos o próximo passo.</p></div>
+    <div class="diferencial-card reveal reveal-delay-1"><span class="dif-num">04</span><span class="dif-icon">🎯</span><div class="dif-title">Consultoria estratégica</div><p class="dif-desc">Para auxiliar nos desafios, leads e estratégias que vamos implementar juntos.</p></div>
     <div class="diferencial-card reveal reveal-delay-2"><span class="dif-num">05</span><span class="dif-icon">🔍</span><div class="dif-title">Monitoramento ativo</div><p class="dif-desc">Identificação de baixa performance e tomadas de ação para garantir as metas.</p></div>
-    <div class="diferencial-card reveal reveal-delay-3"><span class="dif-num">06</span><span class="dif-icon">🤝</span><div class="dif-title">Rotinas garantidas</div><p class="dif-desc">Processos para garantir seu atendimento e execução de campanhas sem depender de sorte.</p></div>
+    <div class="diferencial-card reveal reveal-delay-3"><span class="dif-num">06</span><span class="dif-icon">🤝</span><div class="dif-title">Rotinas garantidas</div><p class="dif-desc">Processos para garantir atendimento e execução de campanhas sem depender de sorte.</p></div>
   </div>
 </div>
 
 <div class="divider"></div>
 
 <!-- ETAPAS -->
-<div id="etapas">
+<div id="etapas" class="sec">
   <div class="etapas-header">
     <div>
       <div class="section-label reveal">Cronograma</div>
       <h2 class="section-title reveal reveal-delay-1">Como o projeto acontece.</h2>
     </div>
-    <p class="section-desc reveal reveal-delay-2">Cada etapa tem prazo definido em dias úteis. Alterações estendem o prazo equivalente — máximo de 3 alterações por entrega.</p>
+    <p class="section-desc reveal reveal-delay-2">Cada etapa tem prazo definido em dias úteis. Máximo de 3 alterações por entrega, cada uma estendendo o prazo equivalente.</p>
   </div>
   <div class="timeline">
-    <div class="timeline-item reveal"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 01</div><div class="timeline-title">Onboarding</div><p class="timeline-desc">Estruturação de infraestrutura, contas e serviços essenciais. Organização de perfis, Meta ADS, pixels, acessos e rastreamento de conversão.</p></div><div class="timeline-prazo"><div class="prazo-num">7</div><div class="prazo-label">dias úteis</div></div></div>
+    <div class="timeline-item reveal"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 01</div><div class="timeline-title">Onboarding</div><p class="timeline-desc">Estruturação de infraestrutura, contas e serviços essenciais. Organização de perfis, Meta ADS, pixels e rastreamento de conversão.</p></div><div class="timeline-prazo"><div class="prazo-num">7</div><div class="prazo-label">dias úteis</div></div></div>
     <div class="timeline-item reveal reveal-delay-1"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 02</div><div class="timeline-title">Campanhas</div><p class="timeline-desc">Planejamento, elaboração das estratégias e desenvolvimento das campanhas conforme os objetivos e nível de acesso do projeto.</p></div><div class="timeline-prazo"><div class="prazo-num">3</div><div class="prazo-label">dias úteis</div></div></div>
     <div class="timeline-item reveal reveal-delay-2"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 03 · Contínuo</div><div class="timeline-title">Gestão Semanal</div><p class="timeline-desc">Acompanhamento premium com otimização de recursos, orçamento, medição de resultados e suporte especializado toda semana.</p></div><div class="timeline-prazo"><div class="prazo-num">1×</div><div class="prazo-label">por semana</div></div></div>
     <div class="timeline-item reveal reveal-delay-3"><div class="timeline-dot"></div><div><div class="timeline-step">Etapa 04 · Contínuo</div><div class="timeline-title">Gestão Mensal</div><p class="timeline-desc">Relatório de resultados, alinhamento de expectativas e geração ativa de oportunidades para o próximo ciclo.</p></div><div class="timeline-prazo"><div class="prazo-num">1×</div><div class="prazo-label">por mês</div></div></div>
@@ -886,147 +729,75 @@
 
 <div class="divider"></div>
 
-<!-- COMPARAÇÃO DE CUSTO -->
-<div id="comparacao" style="max-width: 1200px; margin: 0 auto; padding: 120px 24px;">
-  <div style="margin-bottom: 72px;">
+<!-- COMPARAÇÃO -->
+<div id="comparacao" class="sec">
+  <div style="margin-bottom:56px;">
     <div class="section-label reveal">O custo real</div>
     <h2 class="section-title reveal reveal-delay-1">Montar um time equivalente<br>custaria quanto por mês?</h2>
-    <p class="section-desc reveal reveal-delay-2">Para entregar tudo que a Paleta Food entrega, você precisaria contratar pelo menos cinco profissionais separados. Veja o que isso representaria no caixa.</p>
+    <p class="section-desc reveal reveal-delay-2">Para entregar tudo que a Paleta Food entrega, você precisaria contratar pelo menos cinco profissionais separados.</p>
   </div>
 
-  <div class="reveal reveal-delay-1 grid-2col" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--border); margin-bottom: 2px;">
-
-    <!-- Lado esquerdo: contratar separado -->
-    <div style="background: var(--bg2); padding: 48px 40px;">
-      <div style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 32px; display: flex; align-items: center; gap: 12px;"><span style="width:24px; height:1px; background:var(--text-muted); display:inline-block;"></span>Contratar profissionais separados</div>
-
-      <div style="display: flex; flex-direction: column; gap: 0; background: var(--border);">
-        <div class="cmp-row" style="background: var(--bg3); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-          <div>
-            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Gestor de tráfego pago</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Meta ADS, campanhas, relatórios</div>
-          </div>
-          <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap;">R$ 3.500</div>
-        </div>
-        <div class="cmp-row" style="background: var(--bg3); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-          <div>
-            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Social media + produção</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Posts, stories, conteúdo mensal</div>
-          </div>
-          <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap;">R$ 3.000</div>
-        </div>
-        <div class="cmp-row" style="background: var(--bg3); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-          <div>
-            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Consultor de vendas / CRM</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Scripts, playbook, treinamento</div>
-          </div>
-          <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap;">R$ 3.500</div>
-        </div>
-        <div class="cmp-row" style="background: var(--bg3); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-          <div>
-            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Estrategista de marketing</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Planejamento, funis, posicionamento</div>
-          </div>
-          <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap;">R$ 4.000</div>
-        </div>
-        <div class="cmp-row" style="background: var(--bg3); padding: 20px 28px; display: flex; justify-content: space-between; align-items: center;">
-          <div>
-            <div style="font-size: 14px; font-weight: 500; color: var(--text);">Analista de dados / indicadores</div>
-            <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Relatórios, métricas, acompanhamento</div>
-          </div>
-          <div style="font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--text-muted); white-space: nowrap;">R$ 2.500</div>
-        </div>
+  <div class="comparacao-grid reveal reveal-delay-1">
+    <div class="cmp-col cmp-col-before">
+      <div class="cmp-header cmp-header-before"><span></span>Contratar profissionais separados</div>
+      <div class="cmp-rows">
+        <div class="cmp-row"><div><div class="cmp-row-label">Gestor de tráfego pago</div><div class="cmp-row-sub">Meta ADS, campanhas, relatórios</div></div><div class="cmp-row-price">R$ 3.500</div></div>
+        <div class="cmp-row"><div><div class="cmp-row-label">Social media + produção</div><div class="cmp-row-sub">Posts, stories, conteúdo mensal</div></div><div class="cmp-row-price">R$ 3.000</div></div>
+        <div class="cmp-row"><div><div class="cmp-row-label">Consultor de vendas / CRM</div><div class="cmp-row-sub">Scripts, playbook, treinamento</div></div><div class="cmp-row-price">R$ 3.500</div></div>
+        <div class="cmp-row"><div><div class="cmp-row-label">Estrategista de marketing</div><div class="cmp-row-sub">Planejamento, funis, posicionamento</div></div><div class="cmp-row-price">R$ 4.000</div></div>
+        <div class="cmp-row"><div><div class="cmp-row-label">Analista de dados</div><div class="cmp-row-sub">Relatórios, métricas, acompanhamento</div></div><div class="cmp-row-price">R$ 2.500</div></div>
       </div>
-
-      <!-- Total separado -->
-      <div style="margin-top: 2px; background: var(--bg); padding: 28px; display: flex; justify-content: space-between; align-items: center; border: 1px solid rgba(232,226,217,0.08);">
-        <div>
-          <div style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px;">Total mensal estimado</div>
-          <div style="font-size: 11px; color: var(--text-muted); opacity: 0.6;">Sem integração entre áreas. Sem visão de negócio.</div>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-family: 'Fraunces', serif; font-size: 40px; font-weight: 900; color: var(--text); line-height: 1;">R$ 16.500</div>
-          <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">por mês · 5 profissionais</div>
-        </div>
+      <div class="cmp-total">
+        <div><div class="cmp-total-label">Total mensal estimado</div><div class="cmp-total-sub">Sem integração entre áreas.</div></div>
+        <div><div class="cmp-total-price">R$ 16.500</div><div class="cmp-total-period">por mês · 5 profissionais</div></div>
       </div>
-
-      <div style="margin-top: 16px; font-size: 12px; color: var(--text-muted); line-height: 1.7; opacity: 0.7;">
-        * Valores de mercado estimados para freelancers especializados em Manaus. Não incluem encargos, benefícios ou tempo de gestão e alinhamento entre profissionais.
-      </div>
+      <p class="cmp-note">* Valores de mercado estimados para freelancers em Manaus. Não incluem encargos, benefícios ou tempo de gestão entre profissionais.</p>
     </div>
 
-    <!-- Lado direito: Paleta Food -->
-    <div style="background: var(--bg3); padding: 48px 40px; position: relative; overflow: hidden;">
-      <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(to right, var(--teal-light), var(--gold));"></div>
-
-      <div style="font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 32px; display: flex; align-items: center; gap: 12px;"><span style="width:24px; height:1px; background:var(--gold); display:inline-block;"></span>Paleta Food — tudo integrado</div>
-
-      <div style="display: flex; flex-direction: column; gap: 0; background: var(--border); margin-bottom: 2px;">
-        <div style="background: var(--bg2); padding: 20px 28px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid var(--border);">
-          <span style="color: var(--gold); margin-top: 2px; flex-shrink:0;">→</span>
-          <div style="font-size: 14px; color: var(--text); line-height: 1.5;">Estratégia + tráfego + conteúdo + CRM + indicadores — tudo sob uma coordenação com <strong>foco em vendas</strong></div>
-        </div>
-        <div style="background: var(--bg2); padding: 20px 28px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid var(--border);">
-          <span style="color: var(--gold); margin-top: 2px; flex-shrink:0;">→</span>
-          <div style="font-size: 14px; color: var(--text); line-height: 1.5;">Checkpoint semanal e mensal com análise de desempenho e plano de ação</div>
-        </div>
-        <div style="background: var(--bg2); padding: 20px 28px; display: flex; align-items: flex-start; gap: 12px; border-bottom: 1px solid var(--border);">
-          <span style="color: var(--gold); margin-top: 2px; flex-shrink:0;">→</span>
-          <div style="font-size: 14px; color: var(--text); line-height: 1.5;">Conhecimento específico do setor de alimentação e eventos — não é agência genérica</div>
-        </div>
-        <div style="background: var(--bg2); padding: 20px 28px; display: flex; align-items: flex-start; gap: 12px;">
-          <span style="color: var(--gold); margin-top: 2px; flex-shrink:0;">→</span>
-          <div style="font-size: 14px; color: var(--text); line-height: 1.5;">Start em até 7 dias. Sem tempo perdido em onboarding de múltiplos freelancers</div>
-        </div>
+    <div class="cmp-col cmp-col-after">
+      <div class="cmp-header cmp-header-after"><span></span>Paleta Food — tudo integrado</div>
+      <div class="cmp-features">
+        <div class="cmp-feature"><span class="cmp-feature-arrow">→</span><span>Estratégia + tráfego + conteúdo + CRM + indicadores sob uma coordenação com <strong>foco em vendas</strong></span></div>
+        <div class="cmp-feature"><span class="cmp-feature-arrow">→</span><span>Checkpoint semanal e mensal com análise e plano de ação</span></div>
+        <div class="cmp-feature"><span class="cmp-feature-arrow">→</span><span>Especialização em food e eventos — não é agência genérica</span></div>
+        <div class="cmp-feature"><span class="cmp-feature-arrow">→</span><span>Start em até 7 dias. Sem tempo perdido em onboarding múltiplo</span></div>
       </div>
-
-      <!-- Total Paleta Food -->
-      <div style="margin-top: 2px; background: rgba(201,146,42,0.08); border: 1px solid rgba(201,146,42,0.25); padding: 28px; display: flex; justify-content: space-between; align-items: center;">
-        <div>
-          <div style="font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold); margin-bottom: 4px;">A partir de</div>
-          <div style="font-size: 11px; color: var(--text-muted);">Integrado. Estratégico. Com foco em resultado.</div>
-        </div>
-        <div style="text-align: right;">
-          <div style="font-family: 'Fraunces', serif; font-size: 40px; font-weight: 900; color: var(--gold); line-height: 1;">R$ 3.000</div>
-          <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">por mês · Nível 1</div>
-        </div>
+      <div class="cmp-total">
+        <div><div class="cmp-total-label">A partir de</div><div class="cmp-total-sub">Integrado. Com foco em resultado.</div></div>
+        <div><div class="cmp-total-price">R$ 3.000</div><div class="cmp-total-period">por mês · Nível 1</div></div>
       </div>
-
-      <!-- Economia destacada -->
-      <div style="margin-top: 16px; background: rgba(11,86,115,0.15); border: 1px solid rgba(11,86,115,0.3); padding: 20px 24px; display: flex; align-items: center; gap: 16px;">
-        <div style="font-family: 'Fraunces', serif; font-size: 32px; font-weight: 900; color: var(--teal-light); flex-shrink: 0;">82%</div>
-        <div style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">de economia em relação ao custo de montar um time equivalente — sem abrir mão de nenhuma frente estratégica.</div>
+      <div class="cmp-savings">
+        <div class="cmp-savings-num">82%</div>
+        <div class="cmp-savings-text">de economia em relação ao custo de montar um time equivalente — sem abrir mão de nenhuma frente estratégica.</div>
       </div>
     </div>
   </div>
 
-  <div class="reveal reveal-delay-2" style="background: var(--bg2); border-left: 3px solid var(--gold); padding: 28px 32px; display: flex; align-items: center; gap: 20px;">
-    <span style="font-size: 20px; flex-shrink:0;">💡</span>
-    <p style="font-size: 14px; color: var(--text-muted); line-height: 1.8; font-weight: 300;">Contratar separado não é só mais caro — é mais lento, mais difícil de alinhar e gera uma visão fragmentada do negócio. A Paleta Food entrega uma única estratégia integrada, onde cada ação de conteúdo, tráfego e vendas fala a mesma língua.</p>
+  <div class="budget-note reveal reveal-delay-2">
+    <div class="budget-note-icon">💡</div>
+    <div class="budget-note-text">Contratar separado não é só mais caro — é mais lento e gera visão fragmentada do negócio. A Paleta Food entrega uma estratégia integrada onde conteúdo, tráfego e vendas falam a mesma língua.</div>
   </div>
 
-  <!-- CTA pós-comparação: maior força de conversão -->
-  <div class="section-cta reveal" style="text-align: center; padding-top: 56px;">
-    <p class="section-cta-label">5 profissionais separados ou uma parceria estratégica completa?</p>
-    <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary" style="font-size: 14px; padding: 18px 48px;">Quero a parceria estratégica →</a>
+  <div class="sec-cta reveal reveal-delay-3">
+    <p class="sec-cta-label">5 profissionais separados ou uma parceria estratégica completa?</p>
+    <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">Quero a parceria estratégica →</a>
   </div>
 </div>
 
 <div class="divider"></div>
 
 <!-- INVESTIMENTO -->
-<div id="investimento">
+<div id="investimento" class="sec">
   <div class="inv-header">
     <div class="section-label reveal">Investimento</div>
     <h2 class="section-title reveal reveal-delay-1">Escolha o seu nível.</h2>
-    <p class="section-desc reveal reveal-delay-2" style="margin: 0 auto 48px;">Cada plano é um contrato de 12 meses. O nível define a profundidade da parceria.</p>
+    <p class="section-desc reveal reveal-delay-2" style="margin:0 auto 40px;">Cada plano é um contrato de 12 meses. O nível define a profundidade da parceria.</p>
   </div>
 
   <div class="reveal-gate reveal reveal-delay-3">
-    <p>Os valores estão disponíveis abaixo.<br>Quando estiver pronto para ver o investimento, clique para revelar.</p>
+    <p>Os valores estão disponíveis abaixo.<br>Quando estiver pronto, clique para revelar.</p>
     <button class="btn-reveal" id="revealBtn" onclick="revealPricing()">
-      <span class="lock-icon">🔒</span>
-      Revelar investimento
+      <span class="lock-icon">🔒</span> Revelar investimento
     </button>
   </div>
 
@@ -1044,7 +815,7 @@
         <ul class="pricing-features">
           <li>Análise de mercado e posicionamento</li>
           <li>Tráfego pago estratégico (Meta ADS)</li>
-          <li>até 10 conteúdos mensais + 90 stories por mês</li>
+          <li>15 postagens + 90 stories/mês</li>
           <li>Produção de conteúdo mensal</li>
           <li>Acompanhamento semanal e mensal</li>
         </ul>
@@ -1063,8 +834,8 @@
           <li>Tudo do Nível 1</li>
           <li>CRM de vendas + playbook</li>
           <li>Treinamento do time comercial</li>
-          <li>até 15 conteúdos mensais + 150 stories por mês</li>
-          <li>Gestão e acompanhamento de indicadores</li>
+          <li>20 postagens + 150 stories/mês</li>
+          <li>Gestão de indicadores</li>
         </ul>
         <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="pricing-cta">Iniciar projeto — Nível 2</a>
       </div>
@@ -1089,7 +860,7 @@
     </div>
     <div class="budget-note">
       <div class="budget-note-icon">💡</div>
-      <div class="budget-note-text"><strong>Budget de campanhas (Meta ADS):</strong> Investimento mínimo recomendado de R$ 1.500/mês. Até R$ 5.000 sem custo adicional de gestão. Acima disso, 10% sobre o excedente. Licenças de ferramentas (Manychat Pro · R$149/mês e Kommo Avançado · R$142/mês) são de responsabilidade do contratante.</div>
+      <div class="budget-note-text"><strong>Budget de campanhas (Meta ADS):</strong> Mínimo recomendado R$ 1.500/mês. Até R$ 5.000 sem custo adicional de gestão. Licenças: Manychat Pro R$149/mês e Kommo Avançado R$142/mês — responsabilidade do contratante.</div>
     </div>
   </div>
 </div>
@@ -1097,20 +868,16 @@
 <div class="divider"></div>
 
 <!-- ASSINATURA -->
-<div id="assinatura">
+<div id="assinatura" class="sec">
   <div class="assinatura-inner">
     <div class="assinatura-ring reveal">
       <div class="assinatura-ring-inner">🍕</div>
     </div>
     <h2 class="assinatura-title reveal reveal-delay-1">Pronto para<br>crescer junto?</h2>
     <p class="assinatura-sub reveal reveal-delay-2">Validade desta proposta: <strong>3 dias corridos</strong>. Após a assinatura, o projeto inicia em até 7 dias úteis.</p>
-    <div class="reveal reveal-delay-3" style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
-      <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary" style="display:inline-flex; gap:10px; align-items:center;">
-        🚀 Quero iniciar meu projeto
-      </a>
-      <a href="https://wa.me/5592982410613" target="_blank" class="btn-ghost" style="display:inline-flex; gap:10px; align-items:center;">
-        💬 Falar antes de decidir
-      </a>
+    <div class="assinatura-cta reveal reveal-delay-3">
+      <a href="https://forms.gle/28oFtB1QXXU8nX1v7" target="_blank" class="btn-primary">🚀 Quero iniciar meu projeto</a>
+      <a href="https://wa.me/5592000000000" target="_blank" class="btn-ghost">💬 Falar antes de decidir</a>
     </div>
     <div class="assinatura-validade reveal reveal-delay-4">Validade: <strong>3 dias corridos</strong> a partir do envio</div>
   </div>
@@ -1133,61 +900,64 @@
 <div class="divider"></div>
 <footer>
   <div class="footer-brand">paleta <span>food</span></div>
-  <div class="footer-info">Assessoria de Marketing · Manaus, AM<br>Proposta Nº 033.2025 · propostaloppifest.paletamarketing.com.br</div>
+  <div class="footer-info">Assessoria de Marketing · Manaus, AM<br>Proposta Nº 033.2025</div>
 </footer>
 
 <script>
-  // Cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  let mx = 0, my = 0;
+// Cursor (desktop)
+const cur = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+if(cur && window.matchMedia('(hover:hover)').matches){
   document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    cursor.style.left = mx + 'px'; cursor.style.top = my + 'px';
-    ring.style.left = mx + 'px'; ring.style.top = my + 'px';
+    cur.style.left = e.clientX+'px'; cur.style.top = e.clientY+'px';
+    ring.style.left = e.clientX+'px'; ring.style.top = e.clientY+'px';
   });
+}
 
-  // Scroll reveal
-  const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }), { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+// Scroll reveal
+const obs = new IntersectionObserver(entries => entries.forEach(e => {
+  if(e.isIntersecting) e.target.classList.add('visible');
+}), {threshold:.08});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
 
-  // Counter
-  function animCounter(el) {
-    const target = parseInt(el.dataset.target);
-    const duration = 1600;
-    const start = performance.now();
-    function step(now) {
-      const p = Math.min((now - start) / duration, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.floor(ease * target).toLocaleString('pt-BR');
-      if (p < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
+// Counter animation
+function animCounter(el){
+  const target = parseInt(el.dataset.target);
+  const dur = 1600, start = performance.now();
+  (function step(now){
+    const p = Math.min((now-start)/dur,1);
+    const ease = 1-Math.pow(1-p,3);
+    el.textContent = Math.floor(ease*target).toLocaleString('pt-BR');
+    if(p<1) requestAnimationFrame(step);
+  })(performance.now());
+}
 
-  // Reveal pricing
-  let revealed = false;
-  function revealPricing() {
-    if (revealed) return;
-    revealed = true;
-    const btn = document.getElementById('revealBtn');
-    const wrapper = document.getElementById('pricingWrapper');
-    btn.classList.add('unlocked');
-    btn.innerHTML = '<span class="lock-icon">🔓</span> Investimento revelado';
-    btn.disabled = true;
-    wrapper.classList.add('visible');
-    setTimeout(() => {
-      document.querySelectorAll('.counter').forEach(el => animCounter(el));
-    }, 400);
-  }
+// Reveal pricing
+let revealed = false;
+function revealPricing(){
+  if(revealed) return; revealed = true;
+  const btn = document.getElementById('revealBtn');
+  const wrap = document.getElementById('pricingWrapper');
+  btn.classList.add('unlocked');
+  btn.innerHTML = '<span class="lock-icon">🔓</span> Investimento revelado';
+  btn.disabled = true;
+  wrap.classList.add('visible');
+  setTimeout(() => document.querySelectorAll('.counter').forEach(animCounter), 400);
+}
 
-  // Tabs
-  function switchTab(e, tabId) {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    document.getElementById(tabId).classList.add('active');
-  }
+// Tabs
+function switchTab(e, id){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  e.currentTarget.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// Sticky bar
+const stickyBar = document.getElementById('stickyBar');
+window.addEventListener('scroll', () => {
+  if(window.scrollY > 400) stickyBar.classList.add('visible');
+}, {passive:true});
 </script>
 </body>
 </html>
